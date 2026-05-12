@@ -1,7 +1,8 @@
 # Legal Eye — Public Eval Harness
 
-[![Last run](https://img.shields.io/badge/last_run-2026--05--12-bf9b30)](runs/baseline_2026_05_12.json)
-[![PASS rate](https://img.shields.io/badge/PASS-34%25_(17%2F50)-22c55e)](runs/baseline_2026_05_12.json)
+[![Last run](https://img.shields.io/badge/last_run-2026--05--12-bf9b30)](runs/run_2026_05_12_v2.json)
+[![PASS rate](https://img.shields.io/badge/PASS-34%25_(17%2F50)-22c55e)](runs/run_2026_05_12_v2.json)
+[![FAIL count](https://img.shields.io/badge/FAIL-0-22c55e)](runs/run_2026_05_12_v2.json)
 [![Hallucinations](https://img.shields.io/badge/hallucinations-0%25-22c55e)](#what-we-measure)
 [![OOS rejection](https://img.shields.io/badge/out--of--scope_rejection-100%25_(5%2F5)-22c55e)](#what-we-measure)
 
@@ -63,8 +64,8 @@ real strength — *it knows when it doesn't know*:
 |---|---|---|
 | `hallucination_rate` | Fraction of answers that fabricate a citation | **0%** (verified by code: only `verbatim_from_precedent` is wired up; no LLM key in the environment) |
 | `out_of_scope_rejection` | Fraction of adversarial queries (recipes, foreign-jurisdiction trivia, etc.) the system correctly refuses to answer verbatim | **100%** (5/5) |
-| `verbatim_promote_rate` | Fraction of in-scope canonical questions where the system promotes a high-confidence verbatim citation | **32%** (16/50) |
-| FAIL count | Promotions that are on-topic but pulled a citation whose verbatim text is about a different sub-topic | **1** (apropim Q1 — lexical Hebrew-morphology mismatch on `"פירוש"`, fixed in head — re-run will show 0) |
+| `verbatim_promote_rate` | Fraction of in-scope canonical questions where the system promotes a high-confidence verbatim citation | **34%** (17/50) |
+| FAIL count | Promotions that are on-topic but pulled a citation whose verbatim text is about a different sub-topic | **0** ✅ |
 
 The remaining 33 questions land as `WEAK` — **the system answered, but
 without high enough cluster confidence to promote to a verbatim quote.**
@@ -79,7 +80,7 @@ corpus shard:
 | Domain | PASS rate | Tier-B shard size |
 |---|---|---|
 | out-of-scope (adversarial) | **5/5 (100%)** ✅ | n/a |
-| חוזים | 5/10 (50%) | 6,229 docs |
+| חוזים | 6/10 (60%) | 6,229 docs |
 | נזיקין | 2/8 (25%) | 4,545 docs |
 | בריאות | 1/6 (17%) | n/a |
 | **עבודה** | **0/9 (0%)** | **2,948 docs** (smallest) |
@@ -173,7 +174,8 @@ methodology** as a credibility signal, not the **system internals**.
 
 | Date | Total | PASS | WEAK | FAIL | Hallucination rate | OOS rejection | Notes |
 |---|---|---|---|---|---|---|---|
-| 2026-05-12 | 50 | 16 (32%) | 33 | 1 | 0% | 100% (5/5) | Initial public baseline; Q1 lexical FAIL fixed in head |
+| 2026-05-12 (v1) | 50 | 16 (32%) | 33 | 1 | 0% | 100% (5/5) | Initial public baseline |
+| 2026-05-12 (v2) | 50 | **17 (34%)** | 33 | **0** ✅ | 0% | 100% (5/5) | Q1 keyword fix (`פירוש→פרשנ`); contracts domain rose 50→60% |
 
 ---
 
