@@ -1,0 +1,79 @@
+name: weekly-eval
+
+# Runs the Legal Eye eval harness against the live production API every
+# Sunday at 03:00 UTC and commits the fresh results + an updated README
+# badge. Manual triggers via the Actions tab are also allowed.
+
+on:
+  schedule:
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run eval against production
+        id: eval
+        run: |
+          DATE=$(date -u +%Y_%m_%d)
+          OUT="runs/run_${DATE}.json"
+          python3 eval_graph_arguments.py \
+            --base-url https://legal-i-legal-eye.hf.space \
+            --via lawyer \
+            --timeout 60 \
+            --json "$OUT" || true
+          python3 eval_rescore.py "$OUT" > /tmp/summary.txt
+          cat /tmp/summary.txt
+          echo "out=$OUT" >> "$GITHUB_OUTPUT"
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
+
+      - name: Update README badges from the fresh run
+        run: |
+          OUT="${{ steps.eval.outputs.out }}"
+          python3 - <<PY
+          import json, re, pathlib
+          rows = json.load(open("${{ steps.eval.outputs.out }}"))
+          n = len(rows)
+          n_pass = sum(1 for r in rows if r.get("verdict") == "PASS")
+          n_oos  = sum(1 for r in rows if r.get("question", "")
+                       and any(t in r["question"] for t in
+                               ["טראפיק","עוגת","איקאה","בגרות","לימון"]))
+          n_oos_pass = sum(1 for r in rows
+                           if any(t in r.get("question","") for t in
+                                  ["טראפיק","עוגת","איקאה","בגרות","לימון"])
+                           and r.get("verdict") == "PASS")
+          pct = round(100 * n_pass / max(1, n))
+          oos_pct = round(100 * n_oos_pass / max(1, n_oos))
+          date = "${{ steps.eval.outputs.date }}".replace("_","-")
+          readme = pathlib.Path("README.md").read_text()
+          readme = re.sub(r"last_run-\d{4}--\d{2}--\d{2}",
+                          f"last_run-{date.replace('-', '--')}", readme)
+          readme = re.sub(r"PASS-\d+%25_\(\d+%2F\d+\)-\w+",
+                          f"PASS-{pct}%25_({n_pass}%2F{n})-22c55e", readme)
+          readme = re.sub(r"out--of--scope_rejection-\d+%25_\(\d+%2F\d+\)-\w+",
+                          f"out--of--scope_rejection-{oos_pct}%25_({n_oos_pass}%2F{n_oos})-22c55e", readme)
+          pathlib.Path("README.md").write_text(readme)
+          PY
+
+      - name: Commit results
+        run: |
+          git config user.name "legal-eye-eval-bot"
+          git config user.email "bot@legal-eye.1bigfam.com"
+          git add runs/ README.md
+          if git diff --cached --quiet; then
+            echo "No changes — eval result identical to previous"
+            exit 0
+          fi
+          git commit -m "auto: weekly eval run ${{ steps.eval.outputs.date }}"
+          git push
