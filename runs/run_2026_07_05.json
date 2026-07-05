@@ -1,0 +1,302 @@
+[
+  {
+    "question": "פרשנות תכליתית של חוזה לפי הלכת אפרופים",
+    "ok": false,
+    "elapsed_ms": 87,
+    "error": 403
+  },
+  {
+    "question": "חובת תום לב במשא ומתן לקראת חוזה",
+    "ok": false,
+    "elapsed_ms": 64,
+    "error": 403
+  },
+  {
+    "question": "פיצויים מוסכמים שאינם פרופורציונליים לנזק",
+    "ok": false,
+    "elapsed_ms": 56,
+    "error": 403
+  },
+  {
+    "question": "תרופות בשל הפרת חוזה",
+    "ok": false,
+    "elapsed_ms": 184,
+    "error": 403
+  },
+  {
+    "question": "אכיפת חוזה לפי החוק",
+    "ok": false,
+    "elapsed_ms": 114,
+    "error": 403
+  },
+  {
+    "question": "אחריות מעוולים יחד לנזיקין",
+    "ok": false,
+    "elapsed_ms": 65,
+    "error": 403
+  },
+  {
+    "question": "מבחן הצפיות בעבירה של רשלנות",
+    "ok": false,
+    "elapsed_ms": 58,
+    "error": 403
+  },
+  {
+    "question": "פיצוי על נזק לא ממוני בנזיקין",
+    "ok": false,
+    "elapsed_ms": 127,
+    "error": 403
+  },
+  {
+    "question": "פיצויי פיטורים לעובד שפוטר ללא שימוע",
+    "ok": false,
+    "elapsed_ms": 59,
+    "error": 403
+  },
+  {
+    "question": "זכויות עובד בעת מחלה לפי חוק דמי מחלה",
+    "ok": false,
+    "elapsed_ms": 62,
+    "error": 403
+  },
+  {
+    "question": "שעות עבודה ומנוחה לפי החוק",
+    "ok": false,
+    "elapsed_ms": 61,
+    "error": 403
+  },
+  {
+    "question": "שוויון הזדמנויות בעבודה והפליה",
+    "ok": false,
+    "elapsed_ms": 81,
+    "error": 403
+  },
+  {
+    "question": "זכויות חולה לקבלת מידע רפואי",
+    "ok": false,
+    "elapsed_ms": 101,
+    "error": 403
+  },
+  {
+    "question": "ביטוח בריאות ממלכתי וזכאות",
+    "ok": false,
+    "elapsed_ms": 180,
+    "error": 403
+  },
+  {
+    "question": "ילד נכה ביטוח לאומי קצבה",
+    "ok": false,
+    "elapsed_ms": 106,
+    "error": 403
+  },
+  {
+    "question": "חוקי טראפיק באוקלהומה משנת 1985",
+    "ok": false,
+    "elapsed_ms": 61,
+    "error": 403
+  },
+  {
+    "question": "כיצד לאפות עוגת שוקולד עם ביצים וקמח",
+    "ok": false,
+    "elapsed_ms": 113,
+    "error": 403
+  },
+  {
+    "question": "סיכול חוזה לאור נסיבות בלתי צפויות",
+    "ok": false,
+    "elapsed_ms": 63,
+    "error": 403
+  },
+  {
+    "question": "טעות בכריתת חוזה ועילת ביטול",
+    "ok": false,
+    "elapsed_ms": 83,
+    "error": 403
+  },
+  {
+    "question": "הטעייה בעת כריתת חוזה",
+    "ok": false,
+    "elapsed_ms": 52,
+    "error": 403
+  },
+  {
+    "question": "כפייה והשפעה בלתי הוגנת בכריתת חוזה",
+    "ok": false,
+    "elapsed_ms": 57,
+    "error": 403
+  },
+  {
+    "question": "תניה מקפחת בחוזה אחיד",
+    "ok": false,
+    "elapsed_ms": 60,
+    "error": 403
+  },
+  {
+    "question": "ויתור על זכויות חוזיות",
+    "ok": false,
+    "elapsed_ms": 129,
+    "error": 403
+  },
+  {
+    "question": "עשיית עושר ולא במשפט",
+    "ok": false,
+    "elapsed_ms": 57,
+    "error": 403
+  },
+  {
+    "question": "חוזה למראית עין",
+    "ok": false,
+    "elapsed_ms": 58,
+    "error": 403
+  },
+  {
+    "question": "ערבות לחיוב חוזי",
+    "ok": false,
+    "elapsed_ms": 62,
+    "error": 403
+  },
+  {
+    "question": "אחריות מחזיק במקרקעין כלפי מבקרים",
+    "ok": false,
+    "elapsed_ms": 54,
+    "error": 403
+  },
+  {
+    "question": "גרימת מטרד לשכן",
+    "ok": false,
+    "elapsed_ms": 58,
+    "error": 403
+  },
+  {
+    "question": "חובת הקטנת הנזק על הניזוק",
+    "ok": false,
+    "elapsed_ms": 56,
+    "error": 403
+  },
+  {
+    "question": "נטל הראיה בתביעת רשלנות",
+    "ok": false,
+    "elapsed_ms": 52,
+    "error": 403
+  },
+  {
+    "question": "רשלנות רפואית של רופא מטפל",
+    "ok": false,
+    "elapsed_ms": 50,
+    "error": 403
+  },
+  {
+    "question": "פגיעה בפרטיות בעידן הדיגיטלי",
+    "ok": false,
+    "elapsed_ms": 50,
+    "error": 403
+  },
+  {
+    "question": "אחריות יצרן למוצר פגום",
+    "ok": false,
+    "elapsed_ms": 133,
+    "error": 403
+  },
+  {
+    "question": "רישיון מרצון בעוולת הסגת גבול",
+    "ok": false,
+    "elapsed_ms": 55,
+    "error": 403
+  },
+  {
+    "question": "עוולת תרמית בנזיקין",
+    "ok": false,
+    "elapsed_ms": 48,
+    "error": 403
+  },
+  {
+    "question": "תשלום שעות נוספות לעובד",
+    "ok": false,
+    "elapsed_ms": 61,
+    "error": 403
+  },
+  {
+    "question": "שכר מינימום לעובד יומי",
+    "ok": false,
+    "elapsed_ms": 62,
+    "error": 403
+  },
+  {
+    "question": "דמי הבראה לעובד שנתי",
+    "ok": false,
+    "elapsed_ms": 54,
+    "error": 403
+  },
+  {
+    "question": "תחולת הסכם קיבוצי כללי",
+    "ok": false,
+    "elapsed_ms": 53,
+    "error": 403
+  },
+  {
+    "question": "הטרדה מינית במקום העבודה",
+    "ok": false,
+    "elapsed_ms": 61,
+    "error": 403
+  },
+  {
+    "question": "הודעה מוקדמת בעת פיטורים",
+    "ok": false,
+    "elapsed_ms": 56,
+    "error": 403
+  },
+  {
+    "question": "התפטרות בדין מפוטר",
+    "ok": false,
+    "elapsed_ms": 70,
+    "error": 403
+  },
+  {
+    "question": "הפליה בעבודה על רקע מין או גיל",
+    "ok": false,
+    "elapsed_ms": 55,
+    "error": 403
+  },
+  {
+    "question": "מינוי אפוטרופוס על קטין",
+    "ok": false,
+    "elapsed_ms": 87,
+    "error": 403
+  },
+  {
+    "question": "הסכמה מדעת לטיפול רפואי",
+    "ok": false,
+    "elapsed_ms": 57,
+    "error": 403
+  },
+  {
+    "question": "סודיות רפואית וזכות לעיין בתיק",
+    "ok": false,
+    "elapsed_ms": 55,
+    "error": 403
+  },
+  {
+    "question": "סל שירותי הבריאות הממלכתי",
+    "ok": false,
+    "elapsed_ms": 66,
+    "error": 403
+  },
+  {
+    "question": "מתכון לעוגת לימון עם קצפת",
+    "ok": false,
+    "elapsed_ms": 62,
+    "error": 403
+  },
+  {
+    "question": "הוראות הרכבת רהיט מאיקאה",
+    "ok": false,
+    "elapsed_ms": 194,
+    "error": 403
+  },
+  {
+    "question": "תוצאות מבחני בגרות במתמטיקה",
+    "ok": false,
+    "elapsed_ms": 47,
+    "error": 403
+  }
+]
