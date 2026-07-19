@@ -1,7 +1,7 @@
 # Legal Eye — Public Eval Harness
 
-[![Last run](https://img.shields.io/badge/last_run-2026--07--12-bf9b30)](runs/run_2026_05_12_v2.json)
-[![PASS rate](https://img.shields.io/badge/PASS-24%25_(12%2F50)-22c55e)](runs/run_2026_05_12_v2.json)
+[![Last run](https://img.shields.io/badge/last_run-2026--07--19-bf9b30)](runs/run_2026_05_12_v2.json)
+[![PASS rate](https://img.shields.io/badge/PASS-34%25_(17%2F50)-22c55e)](runs/run_2026_05_12_v2.json)
 [![FAIL count](https://img.shields.io/badge/FAIL-0-22c55e)](runs/run_2026_05_12_v2.json)
 [![Hallucinations](https://img.shields.io/badge/hallucinations-0%25-22c55e)](#what-we-measure)
 [![OOS rejection](https://img.shields.io/badge/out--of--scope_rejection-100%25_(5%2F5)-22c55e)](#what-we-measure)
