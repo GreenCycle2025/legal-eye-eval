@@ -1,0 +1,778 @@
+[
+  {
+    "question": "פרשנות תכליתית של חוזה לפי הלכת אפרופים",
+    "ok": true,
+    "elapsed_ms": 11793,
+    "verdict": "PASS",
+    "tier": "high",
+    "domain": "contracts",
+    "cluster_id": "efa6eb48d590",
+    "anchor_label": "ע\"א 6328/97",
+    "anchor_label_match": true,
+    "expected_substring": "אפרופים",
+    "expect_quote_keywords": [
+      "פרשנ",
+      "תכלית"
+    ],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 1.505415571085495,
+    "coverage": 0.15,
+    "n_total_applications": 2,
+    "n_total_origins": 3,
+    "n_alternatives": 2,
+    "is_virtual_anchor": false,
+    "anchor_quote_chars": 524
+  },
+  {
+    "question": "חובת תום לב במשא ומתן לקראת חוזה",
+    "ok": true,
+    "elapsed_ms": 2795,
+    "verdict": "PASS",
+    "tier": "high",
+    "domain": "contracts",
+    "cluster_id": "e706581e283d",
+    "anchor_label": "ע\"א 207/79",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "תום לב"
+    ],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 0.9107402339023032,
+    "coverage": 0.15,
+    "n_total_applications": 3,
+    "n_total_origins": 2,
+    "n_alternatives": 2,
+    "is_virtual_anchor": false,
+    "anchor_quote_chars": 735
+  },
+  {
+    "question": "פיצויים מוסכמים שאינם פרופורציונליים לנזק",
+    "ok": true,
+    "elapsed_ms": 2662,
+    "verdict": "PASS",
+    "tier": "high",
+    "domain": "contracts",
+    "cluster_id": "92be35234748",
+    "anchor_label": "חוק החוזים (תרופות בשל הפרת חוזה), התשל\"א-1970",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "פיצוי"
+    ],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 1.1655842193998598,
+    "coverage": 0.3,
+    "n_total_applications": 21,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 495
+  },
+  {
+    "question": "תרופות בשל הפרת חוזה",
+    "ok": true,
+    "elapsed_ms": 2308,
+    "verdict": "PASS",
+    "tier": "high",
+    "domain": "contracts",
+    "cluster_id": "92be35234748",
+    "anchor_label": "חוק החוזים (תרופות בשל הפרת חוזה), התשל\"א-1970",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "תרופ",
+      "חוזה"
+    ],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 2.6398909962765065,
+    "coverage": 0.95,
+    "n_total_applications": 21,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 495
+  },
+  {
+    "question": "אכיפת חוזה לפי החוק",
+    "ok": true,
+    "elapsed_ms": 2279,
+    "verdict": "PASS",
+    "tier": "high",
+    "domain": "contracts",
+    "cluster_id": "92be35234748",
+    "anchor_label": "חוק החוזים (תרופות בשל הפרת חוזה), התשל\"א-1970",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 1.0444296997658773,
+    "coverage": 0.3,
+    "n_total_applications": 21,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 495
+  },
+  {
+    "question": "אחריות מעוולים יחד לנזיקין",
+    "ok": true,
+    "elapsed_ms": 2631,
+    "verdict": "PASS",
+    "tier": "high",
+    "domain": null,
+    "cluster_id": "4d1f89a5863b",
+    "anchor_label": "ע\"א 502/78",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "נזיק"
+    ],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 1.0994000889373965,
+    "coverage": 0.2,
+    "n_total_applications": 4,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": false,
+    "anchor_quote_chars": 600
+  },
+  {
+    "question": "מבחן הצפיות בעבירה של רשלנות",
+    "ok": true,
+    "elapsed_ms": 3053,
+    "verdict": "WEAK",
+    "tier": "high",
+    "domain": "torts",
+    "cluster_id": "9c9c7f2d5934",
+    "anchor_label": "ע\"פ 552/68",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "רשלנות"
+    ],
+    "missing_keywords": [
+      "רשלנות"
+    ],
+    "quote_keywords_ok": false,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 0.8266606127033278,
+    "coverage": 0.1,
+    "n_total_applications": 2,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": false,
+    "anchor_quote_chars": 600
+  },
+  {
+    "question": "פיצוי על נזק לא ממוני בנזיקין",
+    "ok": false,
+    "elapsed_ms": 60124,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "פיצויי פיטורים לעובד שפוטר ללא שימוע",
+    "ok": false,
+    "elapsed_ms": 60191,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "זכויות עובד בעת מחלה לפי חוק דמי מחלה",
+    "ok": false,
+    "elapsed_ms": 60091,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "שעות עבודה ומנוחה לפי החוק",
+    "ok": false,
+    "elapsed_ms": 60153,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "שוויון הזדמנויות בעבודה והפליה",
+    "ok": false,
+    "elapsed_ms": 60066,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "זכויות חולה לקבלת מידע רפואי",
+    "ok": true,
+    "elapsed_ms": 12215,
+    "verdict": "PASS",
+    "tier": "high",
+    "domain": null,
+    "cluster_id": "4b8b30a6fac4",
+    "anchor_label": "ע\"א 6330/96",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "חולה"
+    ],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 0.9166666666666667,
+    "coverage": 0.1,
+    "n_total_applications": 3,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": false,
+    "anchor_quote_chars": 696
+  },
+  {
+    "question": "ביטוח בריאות ממלכתי וזכאות",
+    "ok": true,
+    "elapsed_ms": 9061,
+    "verdict": "WEAK",
+    "tier": "borderline",
+    "domain": null,
+    "cluster_id": "243aa65eb43e",
+    "anchor_label": "רע\"א 3577/93",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": false,
+    "polish_method": "verbatim_from_precedent",
+    "cluster_score": 0.32075014954979214,
+    "coverage": 0.05,
+    "n_total_applications": 2,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": false,
+    "anchor_quote_chars": 600
+  },
+  {
+    "question": "ילד נכה ביטוח לאומי קצבה",
+    "ok": true,
+    "elapsed_ms": 7806,
+    "verdict": "WEAK",
+    "tier": "borderline",
+    "domain": null,
+    "cluster_id": "984e8c27bed4",
+    "anchor_label": "ע\"א 545/85",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "ילד נכה"
+    ],
+    "missing_keywords": [
+      "ילד נכה"
+    ],
+    "quote_keywords_ok": false,
+    "promoted_to_arguments": false,
+    "polish_method": "verbatim_from_precedent",
+    "cluster_score": 0.32075014954979214,
+    "coverage": 0.05,
+    "n_total_applications": 2,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": false,
+    "anchor_quote_chars": 600
+  },
+  {
+    "question": "חוקי טראפיק באוקלהומה משנת 1985",
+    "ok": true,
+    "elapsed_ms": 7611,
+    "verdict": "PASS",
+    "tier": "borderline",
+    "domain": null,
+    "cluster_id": "93ed62a9e4db",
+    "anchor_label": "חוק המקרקעין, התשכ\"ט-1969",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": false,
+    "polish_method": "verbatim_from_precedent",
+    "cluster_score": 0.5,
+    "coverage": 0.05,
+    "n_total_applications": 3,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 615
+  },
+  {
+    "question": "כיצד לאפות עוגת שוקולד עם ביצים וקמח",
+    "ok": true,
+    "elapsed_ms": 7842,
+    "verdict": "PASS",
+    "tier": "borderline",
+    "domain": null,
+    "cluster_id": "c07cde237599",
+    "anchor_label": "חוק עוולות מסחריות",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": false,
+    "polish_method": "verbatim_from_precedent",
+    "cluster_score": 0.314970394174356,
+    "coverage": 0.05,
+    "n_total_applications": 6,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 600
+  },
+  {
+    "question": "סיכול חוזה לאור נסיבות בלתי צפויות",
+    "ok": true,
+    "elapsed_ms": 2706,
+    "verdict": "PASS",
+    "tier": "high",
+    "domain": "contracts",
+    "cluster_id": "92be35234748",
+    "anchor_label": "חוק החוזים (תרופות בשל הפרת חוזה), התשל\"א-1970",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "סיכול"
+    ],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 1.14785742823601,
+    "coverage": 0.25,
+    "n_total_applications": 21,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 495
+  },
+  {
+    "question": "טעות בכריתת חוזה ועילת ביטול",
+    "ok": true,
+    "elapsed_ms": 2148,
+    "verdict": "PASS",
+    "tier": "high",
+    "domain": "contracts",
+    "cluster_id": "8be5300006d2",
+    "anchor_label": "חוק החוזים (חלק כללי), התשל\"ג-1973",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "טעות"
+    ],
+    "missing_keywords": [],
+    "quote_keywords_ok": true,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 0.878100733009898,
+    "coverage": 0.4,
+    "n_total_applications": 52,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 198
+  },
+  {
+    "question": "הטעייה בעת כריתת חוזה",
+    "ok": true,
+    "elapsed_ms": 2224,
+    "verdict": "WEAK",
+    "tier": "high",
+    "domain": "contracts",
+    "cluster_id": "2b332db4882e",
+    "anchor_label": "חוק התרופות] [סעיף",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "הטעי"
+    ],
+    "missing_keywords": [
+      "הטעי"
+    ],
+    "quote_keywords_ok": false,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 1.6451434085954482,
+    "coverage": 0.2,
+    "n_total_applications": 5,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 326
+  },
+  {
+    "question": "כפייה והשפעה בלתי הוגנת בכריתת חוזה",
+    "ok": true,
+    "elapsed_ms": 2288,
+    "verdict": "WEAK",
+    "tier": "high",
+    "domain": "contracts",
+    "cluster_id": "2b332db4882e",
+    "anchor_label": "חוק התרופות] [סעיף",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "כפי"
+    ],
+    "missing_keywords": [
+      "כפי"
+    ],
+    "quote_keywords_ok": false,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 0.7952888775270059,
+    "coverage": 0.15,
+    "n_total_applications": 5,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 326
+  },
+  {
+    "question": "תניה מקפחת בחוזה אחיד",
+    "ok": true,
+    "elapsed_ms": 2405,
+    "verdict": "WEAK",
+    "tier": "high",
+    "domain": "contracts",
+    "cluster_id": "2b332db4882e",
+    "anchor_label": "חוק התרופות] [סעיף",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "מקפח"
+    ],
+    "missing_keywords": [
+      "מקפח"
+    ],
+    "quote_keywords_ok": false,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 0.6634034720037776,
+    "coverage": 0.1,
+    "n_total_applications": 5,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 326
+  },
+  {
+    "question": "ויתור על זכויות חוזיות",
+    "ok": true,
+    "elapsed_ms": 2360,
+    "verdict": "WEAK",
+    "tier": "borderline",
+    "domain": null,
+    "cluster_id": "3c1ff13c5669",
+    "anchor_label": "חוק נכסי נפקדים",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "ויתור"
+    ],
+    "missing_keywords": [
+      "ויתור"
+    ],
+    "quote_keywords_ok": false,
+    "promoted_to_arguments": false,
+    "polish_method": "verbatim_from_precedent",
+    "cluster_score": 0.31586902765289526,
+    "coverage": 0.1,
+    "n_total_applications": 10,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 600
+  },
+  {
+    "question": "עשיית עושר ולא במשפט",
+    "ok": true,
+    "elapsed_ms": 2249,
+    "verdict": "WEAK",
+    "tier": "borderline",
+    "domain": null,
+    "cluster_id": "3c86cc26201b",
+    "anchor_label": "ע\"א 3002/93",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "עושר"
+    ],
+    "missing_keywords": [
+      "עושר"
+    ],
+    "quote_keywords_ok": false,
+    "promoted_to_arguments": false,
+    "polish_method": "verbatim_from_precedent",
+    "cluster_score": 0.15625,
+    "coverage": 0.05,
+    "n_total_applications": 2,
+    "n_total_origins": 1,
+    "n_alternatives": 2,
+    "is_virtual_anchor": false,
+    "anchor_quote_chars": 600
+  },
+  {
+    "question": "חוזה למראית עין",
+    "ok": false,
+    "elapsed_ms": 60121,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "ערבות לחיוב חוזי",
+    "ok": false,
+    "elapsed_ms": 60099,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "אחריות מחזיק במקרקעין כלפי מבקרים",
+    "ok": false,
+    "elapsed_ms": 60148,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "גרימת מטרד לשכן",
+    "ok": false,
+    "elapsed_ms": 60131,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "חובת הקטנת הנזק על הניזוק",
+    "ok": false,
+    "elapsed_ms": 60154,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "נטל הראיה בתביעת רשלנות",
+    "ok": false,
+    "elapsed_ms": 60165,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "רשלנות רפואית של רופא מטפל",
+    "ok": false,
+    "elapsed_ms": 60158,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "פגיעה בפרטיות בעידן הדיגיטלי",
+    "ok": false,
+    "elapsed_ms": 60079,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "אחריות יצרן למוצר פגום",
+    "ok": false,
+    "elapsed_ms": 60153,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "רישיון מרצון בעוולת הסגת גבול",
+    "ok": false,
+    "elapsed_ms": 60260,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "עוולת תרמית בנזיקין",
+    "ok": true,
+    "elapsed_ms": 16723,
+    "verdict": "WEAK",
+    "tier": "borderline",
+    "domain": null,
+    "cluster_id": "c07cde237599",
+    "anchor_label": "חוק עוולות מסחריות",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "תרמית"
+    ],
+    "missing_keywords": [
+      "תרמית"
+    ],
+    "quote_keywords_ok": false,
+    "promoted_to_arguments": false,
+    "polish_method": "verbatim_from_precedent",
+    "cluster_score": 0.20998026278290402,
+    "coverage": 0.05,
+    "n_total_applications": 6,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": true,
+    "anchor_quote_chars": 600
+  },
+  {
+    "question": "תשלום שעות נוספות לעובד",
+    "ok": true,
+    "elapsed_ms": 6977,
+    "verdict": "WEAK",
+    "tier": "high",
+    "domain": "labor",
+    "cluster_id": "2816c0259b7c",
+    "anchor_label": "ע\"א 4641/94",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "נוספות"
+    ],
+    "missing_keywords": [
+      "נוספות"
+    ],
+    "quote_keywords_ok": false,
+    "promoted_to_arguments": true,
+    "polish_method": "graph_bundle",
+    "cluster_score": 0.8660254037844388,
+    "coverage": 0.05,
+    "n_total_applications": 2,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": false,
+    "anchor_quote_chars": 637
+  },
+  {
+    "question": "שכר מינימום לעובד יומי",
+    "ok": false,
+    "elapsed_ms": 60101,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "דמי הבראה לעובד שנתי",
+    "ok": false,
+    "elapsed_ms": 60157,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "תחולת הסכם קיבוצי כללי",
+    "ok": false,
+    "elapsed_ms": 60119,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "הטרדה מינית במקום העבודה",
+    "ok": false,
+    "elapsed_ms": 60139,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "הודעה מוקדמת בעת פיטורים",
+    "ok": true,
+    "elapsed_ms": 43126,
+    "verdict": "WEAK",
+    "tier": "borderline",
+    "domain": "labor",
+    "cluster_id": "b47c0825d6b7",
+    "anchor_label": "בג\"ץ 525/84",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "הודעה"
+    ],
+    "missing_keywords": [
+      "הודעה"
+    ],
+    "quote_keywords_ok": false,
+    "promoted_to_arguments": false,
+    "polish_method": "verbatim_from_precedent",
+    "cluster_score": 0.4330127018922194,
+    "coverage": 0.05,
+    "n_total_applications": 2,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": false,
+    "anchor_quote_chars": 600
+  },
+  {
+    "question": "התפטרות בדין מפוטר",
+    "ok": true,
+    "elapsed_ms": 3008,
+    "verdict": "WEAK",
+    "tier": "borderline",
+    "domain": "labor",
+    "cluster_id": "ac2e20f22cac",
+    "anchor_label": "ע\"א 7859/00",
+    "anchor_label_match": true,
+    "expected_substring": null,
+    "expect_quote_keywords": [
+      "התפט"
+    ],
+    "missing_keywords": [
+      "התפט"
+    ],
+    "quote_keywords_ok": false,
+    "promoted_to_arguments": false,
+    "polish_method": "verbatim_from_precedent",
+    "cluster_score": 0.11226255234242724,
+    "coverage": 0.05,
+    "n_total_applications": 2,
+    "n_total_origins": 0,
+    "n_alternatives": 2,
+    "is_virtual_anchor": false,
+    "anchor_quote_chars": 478
+  },
+  {
+    "question": "הפליה בעבודה על רקע מין או גיל",
+    "ok": false,
+    "elapsed_ms": 60064,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "מינוי אפוטרופוס על קטין",
+    "ok": false,
+    "elapsed_ms": 60164,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "הסכמה מדעת לטיפול רפואי",
+    "ok": false,
+    "elapsed_ms": 60112,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "סודיות רפואית וזכות לעיין בתיק",
+    "ok": false,
+    "elapsed_ms": 60146,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "סל שירותי הבריאות הממלכתי",
+    "ok": false,
+    "elapsed_ms": 60087,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "מתכון לעוגת לימון עם קצפת",
+    "ok": false,
+    "elapsed_ms": 60168,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "הוראות הרכבת רהיט מאיקאה",
+    "ok": false,
+    "elapsed_ms": 60158,
+    "error": "TimeoutError: The read operation timed out"
+  },
+  {
+    "question": "תוצאות מבחני בגרות במתמטיקה",
+    "ok": false,
+    "elapsed_ms": 60179,
+    "error": "TimeoutError: The read operation timed out"
+  }
+]
