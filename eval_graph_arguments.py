@@ -504,6 +504,9 @@ def evaluate(
         # harness stays backwards-compatible.
         "anchor_quote_doc_id":    diagnostic.get("anchor_quote_doc_id"),
         "anchor_quote_source":    diagnostic.get("anchor_quote_source"),
+        "anchor_quote_query_score": diagnostic.get("anchor_quote_query_score"),
+        "anchor_quote_reranked":  diagnostic.get("anchor_quote_reranked"),
+        "anchor_quote_candidates": diagnostic.get("anchor_quote_candidates") or [],
         "fusion_rank":            diagnostic.get("fusion_rank_for_quote_doc"),
         "retriever_ranks":        retriever_ranks,
         "bm25_rank":              retriever_ranks.get("bm25"),
