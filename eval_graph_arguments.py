@@ -471,6 +471,9 @@ def evaluate(
         else:
             verdict = "PASS"
 
+    diagnostic = bundle.get("diagnostic") or {}
+    retriever_ranks = diagnostic.get("retriever_ranks_for_quote_doc") or {}
+
     return {
         "question":              q["question"],
         "ok":                    True,
@@ -496,6 +499,18 @@ def evaluate(
         ),
         "is_virtual_anchor":     (bundle.get("anchor_id") or "").startswith("virtual:"),
         "anchor_quote_chars":    len(anchor_quote),
+        # Failure-attribution instrumentation from Legal Eye vNext. Older
+        # production versions simply omit these diagnostics, so the public
+        # harness stays backwards-compatible.
+        "anchor_quote_doc_id":    diagnostic.get("anchor_quote_doc_id"),
+        "anchor_quote_source":    diagnostic.get("anchor_quote_source"),
+        "fusion_rank":            diagnostic.get("fusion_rank_for_quote_doc"),
+        "retriever_ranks":        retriever_ranks,
+        "bm25_rank":              retriever_ranks.get("bm25"),
+        "dense_rank":             retriever_ranks.get("dense"),
+        "hebrew_rank":            retriever_ranks.get("hebrew_encoder"),
+        "graph_rank":             retriever_ranks.get("graph"),
+        "retriever_latency_ms":   diagnostic.get("per_retriever_ms") or {},
     }
 
 

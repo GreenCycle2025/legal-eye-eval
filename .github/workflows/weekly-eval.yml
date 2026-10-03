@@ -35,6 +35,7 @@ jobs:
             --json "$OUT" || true
           python3 eval_rescore.py "$OUT" > /tmp/summary.txt
           cat /tmp/summary.txt
+          python3 build_latest.py "$OUT" --out runs/latest.json
           echo "out=$OUT" >> "$GITHUB_OUTPUT"
           echo "date=$DATE" >> "$GITHUB_OUTPUT"
 
