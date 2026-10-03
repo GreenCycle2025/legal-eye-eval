@@ -32,6 +32,8 @@ import urllib.error
 import urllib.request
 from typing import Any, Dict, List, Optional
 
+from authority_expectations_v2 import validate as validate_authority_v2
+
 
 # ──────────────────────────────────────────────────────────────────────
 # Canonical question set — covers the major Israeli civil-law doctrines
@@ -396,6 +398,11 @@ def evaluate(
             (cluster_score >= MIN_SCORE and coverage >= MIN_COV)
             or cluster_score >= HIGH_BYPASS
         )
+        diagnostic = bundle.get("diagnostic") or {}
+        if promoted_synthetic and diagnostic.get("promotion_relies_on_query_fusion"):
+            qscore = float(diagnostic.get("anchor_quote_query_score") or 0.0)
+            reranked = bool(diagnostic.get("anchor_quote_reranked"))
+            promoted_synthetic = (qscore >= 0.75 or (reranked and qscore >= 0.60))
         args = ([{"polish_method": "graph_bundle"}]
                 if promoted_synthetic else [])
     else:
@@ -445,6 +452,8 @@ def evaluate(
 
     # Did the graph promote? (arguments[0].polish_method == 'graph_bundle')
     promoted = arg0.get("polish_method") == "graph_bundle"
+    resolved_domain = payload.get("domain") or bundle.get("domain")
+    strict = validate_authority_v2(q["question"], resolved_domain, bundle)
 
     # Verdict ladder:
     #   FAIL — expectation explicitly violated (out-of-scope promoted,
@@ -471,6 +480,17 @@ def evaluate(
         else:
             verdict = "PASS"
 
+    if expect_no_promo:
+        strict_verdict = "PASS" if not promoted else "FAIL"
+    elif not promoted:
+        strict_verdict = "WEAK"
+    elif not strict["strict_domain_ok"] or not strict["strict_authority_ok"]:
+        strict_verdict = "FAIL"
+    elif not quote_keywords_ok:
+        strict_verdict = "WEAK"
+    else:
+        strict_verdict = "PASS"
+
     diagnostic = bundle.get("diagnostic") or {}
     retriever_ranks = diagnostic.get("retriever_ranks_for_quote_doc") or {}
 
@@ -479,8 +499,10 @@ def evaluate(
         "ok":                    True,
         "elapsed_ms":            elapsed_ms,
         "verdict":               verdict,
+        "strict_verdict":        strict_verdict,
         "tier":                  payload.get("confidence"),
-        "domain":                payload.get("domain"),
+        "domain":                resolved_domain,
+        **strict,
         "cluster_id":            bundle.get("cluster_id"),
         "anchor_label":          anchor_label,
         "anchor_label_match":    anchor_match,
@@ -588,6 +610,13 @@ def print_summary(rows: List[Dict[str, Any]]) -> None:
           f"WEAK: {n_weak}  ERR: {n_err}")
     print(f"Promoted to arguments[0]: {n_promoted}/{len(valid)}  "
           f"·  avg latency: {avg_ms:.0f}ms")
+    strict_counts = {
+        key: sum(1 for r in valid if r.get("strict_verdict") == key)
+        for key in ("PASS", "WEAK", "FAIL")
+    }
+    print("Strict authority v2: "
+          f"PASS {strict_counts['PASS']} · WEAK {strict_counts['WEAK']} · "
+          f"FAIL {strict_counts['FAIL']}")
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -615,6 +644,10 @@ def main() -> int:
         help="which endpoint to evaluate: lawyer/ask (default, full path) "
              "or hgraph/argument (bundle-only, fast on large corpora)",
     )
+    parser.add_argument(
+        "--strict-authority", action="store_true",
+        help="fail the run on strict authority/domain violations as well",
+    )
     args = parser.parse_args()
 
     print(f"# Running {len(QUESTIONS)} questions against {args.base_url} "
@@ -632,8 +665,9 @@ def main() -> int:
         print(f"\nFull results written to: {args.json}")
 
     # Exit non-zero if any FAIL or ERR
+    verdict_field = "strict_verdict" if args.strict_authority else "verdict"
     bad = sum(1 for r in rows
-              if not r.get("ok") or r.get("verdict") == "FAIL")
+              if not r.get("ok") or r.get(verdict_field) == "FAIL")
     return 1 if bad > 0 else 0
 
 
