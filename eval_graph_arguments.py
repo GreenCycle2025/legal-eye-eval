@@ -343,6 +343,36 @@ def _post_json(url: str, body: Dict[str, Any], timeout: int = 30) -> Dict[str, A
 # Per-question evaluation
 # ──────────────────────────────────────────────────────────────────────
 
+def _hgraph_promoted(bundle: Dict[str, Any]) -> bool:
+    """Mirror ArgumentBundle.can_promote without importing product code.
+
+    A verified primary statute is a first-class evidence lane and may
+    publish below cluster thresholds. All other bundles retain the historic
+    score/coverage and query-fusion evidence guards.
+    """
+    anchor_quote = (bundle.get("anchor_quote") or "").strip()
+    if not anchor_quote:
+        return False
+    if bool(bundle.get("statute_evidence_verified")):
+        return True
+
+    cluster_score = float(bundle.get("cluster_score") or 0.0)
+    coverage = float(bundle.get("coverage") or 0.0)
+    min_score = float(bundle.get("MIN_PROMOTE_SCORE") or 0.5)
+    min_cov = float(bundle.get("MIN_PROMOTE_COVERAGE") or 0.15)
+    high_bypass = float(bundle.get("HIGH_SCORE_BYPASS") or 0.65)
+    promoted = (
+        (cluster_score >= min_score and coverage >= min_cov)
+        or cluster_score >= high_bypass
+    )
+    diagnostic = bundle.get("diagnostic") or {}
+    if promoted and diagnostic.get("promotion_relies_on_query_fusion"):
+        qscore = float(diagnostic.get("anchor_quote_query_score") or 0.0)
+        reranked = bool(diagnostic.get("anchor_quote_reranked"))
+        promoted = qscore >= 0.75 or (reranked and qscore >= 0.60)
+    return promoted
+
+
 def evaluate(
     base_url: str, q: Dict[str, Any], timeout: int, *, via: str = "lawyer",
 ) -> Dict[str, Any]:
@@ -388,21 +418,7 @@ def evaluate(
         # the bundle itself: promote iff (score≥MIN AND cov≥MIN_COV) OR
         # (score≥HIGH_BYPASS). Previous "score≥0.5" heuristic was lax —
         # let out-of-scope hits with cov=5% slip through as FAILs.
-        cluster_score = float(bundle.get("cluster_score") or 0.0)
-        coverage      = float(bundle.get("coverage") or 0.0)
-        anchor_quote  = (bundle.get("anchor_quote") or "").strip()
-        MIN_SCORE     = float(bundle.get("MIN_PROMOTE_SCORE") or 0.5)
-        MIN_COV       = float(bundle.get("MIN_PROMOTE_COVERAGE") or 0.15)
-        HIGH_BYPASS   = float(bundle.get("HIGH_SCORE_BYPASS") or 0.65)
-        promoted_synthetic = bool(anchor_quote) and (
-            (cluster_score >= MIN_SCORE and coverage >= MIN_COV)
-            or cluster_score >= HIGH_BYPASS
-        )
-        diagnostic = bundle.get("diagnostic") or {}
-        if promoted_synthetic and diagnostic.get("promotion_relies_on_query_fusion"):
-            qscore = float(diagnostic.get("anchor_quote_query_score") or 0.0)
-            reranked = bool(diagnostic.get("anchor_quote_reranked"))
-            promoted_synthetic = (qscore >= 0.75 or (reranked and qscore >= 0.60))
+        promoted_synthetic = _hgraph_promoted(bundle)
         args = ([{"polish_method": "graph_bundle"}]
                 if promoted_synthetic else [])
     else:
@@ -520,6 +536,13 @@ def evaluate(
             ((bundle.get("diagnostic") or {}).get("alternative_clusters")) or []
         ),
         "is_virtual_anchor":     (bundle.get("anchor_id") or "").startswith("virtual:"),
+        "statute_evidence_verified": bool(bundle.get("statute_evidence_verified")),
+        "statute_evidence_doc_id": bundle.get("statute_evidence_doc_id"),
+        "statute_evidence_law": bundle.get("statute_evidence_law"),
+        "statute_evidence_section": bundle.get("statute_evidence_section"),
+        "statute_evidence_title": bundle.get("statute_evidence_title"),
+        "statute_evidence_score": bundle.get("statute_evidence_score"),
+        "statute_evidence_rank": bundle.get("statute_evidence_rank"),
         "anchor_quote_chars":    len(anchor_quote),
         # Failure-attribution instrumentation from Legal Eye vNext. Older
         # production versions simply omit these diagnostics, so the public

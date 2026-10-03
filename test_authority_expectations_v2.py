@@ -56,3 +56,25 @@ def test_conflicting_explicit_domain_still_fails_closed():
     )
     assert result["strict_authority_ok"] is True
     assert result["strict_domain_ok"] is False
+
+
+def test_hgraph_promotion_accepts_verified_primary_statute_below_cluster_gate():
+    from eval_graph_arguments import _hgraph_promoted
+
+    assert _hgraph_promoted({
+        "anchor_quote": "סעיף חוק מאומת",
+        "cluster_score": 0.20,
+        "coverage": 0.05,
+        "statute_evidence_verified": True,
+    }) is True
+
+
+def test_hgraph_promotion_does_not_bypass_cluster_gate_without_verified_statute():
+    from eval_graph_arguments import _hgraph_promoted
+
+    assert _hgraph_promoted({
+        "anchor_quote": "מקור כלשהו",
+        "cluster_score": 0.20,
+        "coverage": 0.05,
+        "statute_evidence_verified": False,
+    }) is False
