@@ -30,6 +30,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 
@@ -374,6 +375,10 @@ def evaluate(
     # Network / API failure — return early with the error
     if "_error" in payload or "_http_error" in payload:
         return {
+            "case_id":      q.get("case_id"),
+            "base_case_id": q.get("base_case_id"),
+            "variant_kind": q.get("variant_kind"),
+            "split":        q.get("split"),
             "question":     q["question"],
             "ok":           False,
             "elapsed_ms":   elapsed_ms,
@@ -475,6 +480,12 @@ def evaluate(
     retriever_ranks = diagnostic.get("retriever_ranks_for_quote_doc") or {}
 
     return {
+        "case_id":               q.get("case_id"),
+        "base_case_id":          q.get("base_case_id"),
+        "base_index":            q.get("base_index"),
+        "variant_index":         q.get("variant_index"),
+        "variant_kind":          q.get("variant_kind"),
+        "split":                 q.get("split"),
         "question":              q["question"],
         "ok":                    True,
         "elapsed_ms":            elapsed_ms,
@@ -486,6 +497,7 @@ def evaluate(
         "anchor_label_match":    anchor_match,
         "expected_substring":    expected,
         "expect_quote_keywords": expect_kws,
+        "expect_no_promotion":   expect_no_promo,
         "missing_keywords":      missing_kws,
         "quote_keywords_ok":     quote_keywords_ok,
         "promoted_to_arguments": promoted,
@@ -591,6 +603,40 @@ def print_summary(rows: List[Dict[str, Any]]) -> None:
 
 
 # ──────────────────────────────────────────────────────────────────────
+# Suite loading / sharding
+# ──────────────────────────────────────────────────────────────────────
+
+def load_question_suite(path: Optional[str]) -> tuple[List[Dict[str, Any]], str]:
+    """Load a checked-in benchmark suite or fall back to canonical 50."""
+    if not path:
+        return list(QUESTIONS), "canonical-50"
+    suite_path = Path(path)
+    payload = json.loads(suite_path.read_text(encoding="utf-8"))
+    if isinstance(payload, dict):
+        rows = payload.get("cases")
+        name = str(payload.get("name") or suite_path.stem)
+    else:
+        rows = payload
+        name = suite_path.stem
+    if not isinstance(rows, list) or not rows:
+        raise SystemExit("suite must contain a non-empty cases list")
+    for index, row in enumerate(rows, start=1):
+        if not isinstance(row, dict) or not str(row.get("question") or "").strip():
+            raise SystemExit(f"suite case {index} is missing question")
+    return rows, name
+
+
+def shard_questions(
+    rows: List[Dict[str, Any]], *, shard_index: int, shard_count: int,
+) -> List[Dict[str, Any]]:
+    if shard_count < 1:
+        raise SystemExit("--shard-count must be >= 1")
+    if not 0 <= shard_index < shard_count:
+        raise SystemExit("--shard-index must satisfy 0 <= index < shard-count")
+    return rows[shard_index::shard_count]
+
+
+# ──────────────────────────────────────────────────────────────────────
 # Main
 # ──────────────────────────────────────────────────────────────────────
 
@@ -615,12 +661,31 @@ def main() -> int:
         help="which endpoint to evaluate: lawyer/ask (default, full path) "
              "or hgraph/argument (bundle-only, fast on large corpora)",
     )
+    parser.add_argument(
+        "--suite", default=None,
+        help="optional JSON benchmark suite; defaults to the canonical 50",
+    )
+    parser.add_argument(
+        "--shard-index", type=int, default=0,
+        help="0-based shard index (use with --shard-count)",
+    )
+    parser.add_argument(
+        "--shard-count", type=int, default=1,
+        help="deterministically stride the suite into N shards",
+    )
     args = parser.parse_args()
 
-    print(f"# Running {len(QUESTIONS)} questions against {args.base_url} "
-          f"via {args.via}")
+    questions, suite_name = load_question_suite(args.suite)
+    questions = shard_questions(
+        questions, shard_index=args.shard_index, shard_count=args.shard_count,
+    )
+    print(
+        f"# Running {len(questions)} questions from {suite_name} "
+        f"shard {args.shard_index}/{args.shard_count} against {args.base_url} "
+        f"via {args.via}"
+    )
     rows: List[Dict[str, Any]] = []
-    for q in QUESTIONS:
+    for q in questions:
         rows.append(evaluate(args.base_url, q, args.timeout, via=args.via))
 
     print_table(rows)

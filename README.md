@@ -95,6 +95,29 @@ rate as new documents land.
 
 ---
 
+## Benchmark v2: 500-case robustness holdout
+
+The 50 canonical questions remain the public production score. In addition, this repo now carries a separate **500-case robustness suite** at `benchmarks/benchmark_v2_500.json`.
+
+This is intentionally described as **50 independent canonical cases × 10 deterministic wording/stress variants**, not as 500 independent legal doctrines. The extra 450 cases are holdout transformations used to detect prompt-surface overfitting after tuning on the canonical set.
+
+The holdout covers concise/formal phrasing, evidence-only requests, anti-hallucination wording, harmless context noise, punctuation/spacing noise, current-law framing, source-coercion resistance, and a facts/question wrapper. Each row preserves the original `expect_*` assertions and contains provenance back to its source question.
+
+```bash
+python3 benchmark_v2.py --check benchmarks/benchmark_v2_500.json
+python3 -m unittest -v test_benchmark_v2.py
+python3 eval_graph_arguments.py \
+  --suite benchmarks/benchmark_v2_500.json \
+  --base-url https://legal-i-legal-eye.hf.space \
+  --via hgraph \
+  --json /tmp/legal-eye-benchmark-v2.json
+python3 benchmark_v2_report.py /tmp/legal-eye-benchmark-v2.json
+```
+
+The v2 reporter keeps canonical and holdout scores separate and derives out-of-scope rejection from suite metadata. No v2 score is shown in the production badges until a complete run has actually been executed.
+
+---
+
 ## The 50 questions
 
 See `eval_graph_arguments.py` lines ~50-310. Coverage:
