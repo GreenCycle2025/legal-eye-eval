@@ -410,6 +410,13 @@ def evaluate(
     expected = q.get("expect_anchor_substring")
     expect_no_promo = bool(q.get("expect_no_promotion"))
     expect_kws = q.get("expect_quote_keywords") or []
+    expected_source_doc_id = q.get("expect_source_doc_id")
+    diagnostic = bundle.get("diagnostic") or {}
+    actual_source_doc_id = diagnostic.get("anchor_quote_doc_id")
+    source_doc_match = (
+        expected_source_doc_id is None
+        or str(actual_source_doc_id or "") == str(expected_source_doc_id)
+    )
     anchor_label = bundle.get("anchor_label") or ""
     anchor_quote = bundle.get("anchor_quote") or ""
     # ── full-bundle haystack ──
@@ -465,18 +472,22 @@ def evaluate(
             verdict = "WEAK"
         elif not quote_keywords_ok:
             verdict = "FAIL"   # promoted but content is wrong
+        elif not source_doc_match:
+            verdict = "FAIL"   # promoted from the wrong authority/source document
         else:
             verdict = "PASS"
     else:
-        # No specific anchor expectation — content keywords still apply
+        # No specific anchor expectation — content keywords still apply.
+        # v3 can additionally require the exact frozen primary-law source.
         if not promoted:
             verdict = "WEAK"
         elif not quote_keywords_ok:
             verdict = "WEAK"   # promoted, no anchor expected, but content off
+        elif not source_doc_match:
+            verdict = "FAIL"
         else:
             verdict = "PASS"
 
-    diagnostic = bundle.get("diagnostic") or {}
     retriever_ranks = diagnostic.get("retriever_ranks_for_quote_doc") or {}
 
     return {
@@ -498,6 +509,9 @@ def evaluate(
         "expected_substring":    expected,
         "expect_quote_keywords": expect_kws,
         "expect_no_promotion":   expect_no_promo,
+        "expected_source_doc_id": expected_source_doc_id,
+        "actual_source_doc_id":   actual_source_doc_id,
+        "source_doc_match":       source_doc_match,
         "missing_keywords":      missing_kws,
         "quote_keywords_ok":     quote_keywords_ok,
         "promoted_to_arguments": promoted,
