@@ -8,6 +8,19 @@
 
 > Hebrew legal RAG, verbatim-from-precedent. No external LLM. Public score.
 
+
+## What this demonstrates
+
+This repository is a public proof-of-work artifact for a production AI system, not a demo notebook.
+
+- **Grounded retrieval:** answers are tied to real Israeli case-law text.
+- **Evaluation discipline:** canonical questions, adversarial out-of-scope cases, raw results and a repeatable scoring harness.
+- **Fail-closed behavior:** the system prefers abstention over unsupported citation.
+- **Production verification:** the harness calls the live API rather than mocked fixtures.
+- **Automation:** GitHub Actions reruns the evaluation on a schedule and exposes regression signals publicly.
+
+Current published safety results: **0% fabricated citations**, **100% out-of-scope rejection (5/5)** and **0 FAIL** on the latest canonical 50-question evaluation.
+
 This repo is the **canonical quality harness** for
 [legal-eye.1bigfam.com](https://legal-eye.1bigfam.com) — a Hebrew legal
 retrieval-augmented-generation system that returns citations
@@ -72,7 +85,7 @@ without high enough cluster confidence to promote to a verbatim quote.**
 That is the correct behaviour: legal accuracy demands abstaining over
 guessing.
 
-### Why "32% PASS" is OK
+### Why "34% PASS" is an honest baseline
 
 The PASS rate strongly correlates with the size of the per-domain
 corpus shard:
@@ -176,7 +189,8 @@ methodology** as a credibility signal, not the **system internals**.
 |---|---|---|---|---|---|---|---|
 | 2026-05-12 (v1) | 50 | 16 (32%) | 33 | 1 | 0% | 100% (5/5) | Initial public baseline |
 | 2026-05-12 (v2) | 50 | **17 (34%)** | 33 | **0** ✅ | 0% | 100% (5/5) | Q1 keyword fix (`פירוש→פרשנ`); contracts domain rose 50→60% |
+| 2026-10-04 | 50 | **17 (34%)** | 33 | **0** ✅ | 0% | 100% (5/5) | Scheduled public regression run; no safety regression |
 
 ---
 
-*Contact: avribarzel@gmail.com · `legal-eye.1bigfam.com`*
+*Contact: avri75154@gmail.com · `legal-eye.1bigfam.com`*
