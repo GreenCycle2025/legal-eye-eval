@@ -1,0 +1,36 @@
+# Continuum contract: how this repository is installed and verified.
+# Written by hand: there is no root manifest (pyproject.toml, requirements.txt or setup.py), so
+# `continuum init` infers no commands for this repository.
+version: 1
+project:
+  id: legal-eye-eval
+  name: legal-eye-eval
+  # The quality harness for the legal-eye product (it measures legal-eye.1bigfam.com and publishes
+  # the results), not a product shipped to users itself.
+  type: internal_tool
+repository:
+  provider: github
+  owner: GreenCycle2025
+  name: legal-eye-eval
+  # GitHub's default branch, where the weekly-eval workflow runs and commits its results. The
+  # contract is adopted on feat/latest-eval-contract-v1 (where runs/latest.json and build_latest.py
+  # live) and reaches main when that branch is merged.
+  defaultBranch: main
+commands:
+  # No install command: every script uses the Python standard library only (CI's weekly-eval job
+  # installs nothing either, on Python 3.11).
+  # The weekly CI job runs the harness against the live production API; that network run is not a
+  # verification gate. The gate is offline: every script compiles, and tests/ checks that
+  # runs/latest.json is exactly what build_latest.py derives from the run it names (generated_at
+  # aside) and that eval_rescore.py reads that run.
+  # Baseline on 2026-10-10 (Python 3.11 and 3.13): compile OK, 2 tests OK.
+  test: python -m compileall -q . && python -m unittest discover -s tests
+# Continuum does not run or deploy anything here: the weekly evaluation is scheduled and committed by
+# GitHub Actions on its own, so there is no production the contract should manage.
+production:
+  enabled: false
+# As in every repository adopted so far: a code change passes only after a critic review round.
+review:
+  enabled: true
+  requiredFor:
+    - code
