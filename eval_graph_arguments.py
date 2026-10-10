@@ -471,6 +471,9 @@ def evaluate(
         else:
             verdict = "PASS"
 
+    diagnostic = bundle.get("diagnostic") or {}
+    retriever_ranks = diagnostic.get("retriever_ranks_for_quote_doc") or {}
+
     return {
         "question":              q["question"],
         "ok":                    True,
@@ -496,6 +499,30 @@ def evaluate(
         ),
         "is_virtual_anchor":     (bundle.get("anchor_id") or "").startswith("virtual:"),
         "anchor_quote_chars":    len(anchor_quote),
+        # Failure-attribution instrumentation from Legal Eye vNext. Older
+        # production versions simply omit these diagnostics, so the public
+        # harness stays backwards-compatible.
+        "anchor_quote_doc_id":    diagnostic.get("anchor_quote_doc_id"),
+        "anchor_quote_source":    diagnostic.get("anchor_quote_source"),
+        "anchor_quote_query_score": diagnostic.get("anchor_quote_query_score"),
+        "anchor_quote_reranked":  diagnostic.get("anchor_quote_reranked"),
+        "anchor_quote_candidates": diagnostic.get("anchor_quote_candidates") or [],
+        "fusion_rank":            diagnostic.get("fusion_rank_for_quote_doc"),
+        "retriever_ranks":        retriever_ranks,
+        "per_retriever_top_docs": diagnostic.get("per_retriever_top_docs") or {},
+        "fused_top_docs":         diagnostic.get("fused_top_docs") or [],
+        "fusion_method":          diagnostic.get("fusion_method"),
+        "query_variants":          diagnostic.get("query_variants") or [],
+        "original_query_gate":      diagnostic.get("original_query_gate") or {},
+        "promotion_relies_on_query_fusion": bool(diagnostic.get("promotion_relies_on_query_fusion")),
+        "selected_cluster_member_ids": diagnostic.get("selected_cluster_member_ids") or [],
+        "cluster_overlap_by_retriever": diagnostic.get("cluster_overlap_by_retriever") or {},
+        "fused_cluster_overlap": diagnostic.get("fused_cluster_overlap") or [],
+        "bm25_rank":              retriever_ranks.get("bm25"),
+        "dense_rank":             retriever_ranks.get("dense"),
+        "hebrew_rank":            retriever_ranks.get("hebrew_encoder"),
+        "graph_rank":             retriever_ranks.get("graph"),
+        "retriever_latency_ms":   diagnostic.get("per_retriever_ms") or {},
     }
 
 

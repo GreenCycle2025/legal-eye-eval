@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-04",
+  "generated_at": "2026-10-10T09:11:23.572931+00:00",
+  "run_file": "runs/run_2026_10_04.json",
+  "total": 50,
+  "pass": 17,
+  "weak": 33,
+  "fail": 0,
+  "pass_rate": 0.34,
+  "weak_rate": 0.66,
+  "oos_total": 5,
+  "oos_rejected": 5,
+  "oos_rejection_rate": 1.0,
+  "attribution": {
+    "CITATION_MISS": 7,
+    "PASS": 17,
+    "PROMOTION_THRESHOLD": 26
+  },
+  "methodology": "canonical-50-live-production"
+}

@@ -1,8 +1,8 @@
 # Legal Eye — Public Eval Harness
 
-[![Last run](https://img.shields.io/badge/last_run-2026--10--04-bf9b30)](runs/run_2026_05_12_v2.json)
-[![PASS rate](https://img.shields.io/badge/PASS-34%25_(17%2F50)-22c55e)](runs/run_2026_05_12_v2.json)
-[![FAIL count](https://img.shields.io/badge/FAIL-0-22c55e)](runs/run_2026_05_12_v2.json)
+[![Last run](https://img.shields.io/badge/last_run-2026--10--04-bf9b30)](runs/latest.json)
+[![PASS rate](https://img.shields.io/badge/PASS-34%25_(17%2F50)-22c55e)](runs/latest.json)
+[![FAIL count](https://img.shields.io/badge/FAIL-0-22c55e)](runs/latest.json)
 [![Hallucinations](https://img.shields.io/badge/hallucinations-0%25-22c55e)](#what-we-measure)
 [![OOS rejection](https://img.shields.io/badge/out--of--scope_rejection-100%25_(5%2F5)-22c55e)](#what-we-measure)
 
@@ -189,6 +189,7 @@ methodology** as a credibility signal, not the **system internals**.
 |---|---|---|---|---|---|---|---|
 | 2026-05-12 (v1) | 50 | 16 (32%) | 33 | 1 | 0% | 100% (5/5) | Initial public baseline |
 | 2026-05-12 (v2) | 50 | **17 (34%)** | 33 | **0** ✅ | 0% | 100% (5/5) | Q1 keyword fix (`פירוש→פרשנ`); contracts domain rose 50→60% |
+| 2026-09-27 | 50 | **17 (34%)** | 33 | **0** ✅ | 0% | 100% (5/5) | Weekly run; no safety regression |
 | 2026-10-04 | 50 | **17 (34%)** | 33 | **0** ✅ | 0% | 100% (5/5) | Scheduled public regression run; no safety regression |
 
 ---
