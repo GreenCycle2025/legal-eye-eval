@@ -1,0 +1,33 @@
+name: uptime
+
+# Checks the public API from outside every 15 minutes: /readyz, the corpus
+# self-test, and whether the Hugging Face Space or the standby answered
+# (monitor.py). A problem opens an issue in this repository, assigned to the
+# repository owner so that GitHub notifies them; its end comments on the
+# issue and closes it. Scheduled runs can start late when GitHub is busy.
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check the public API
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MONITOR_ASSIGNEE: ${{ github.repository_owner }}
+        run: python3 monitor.py --github-issues

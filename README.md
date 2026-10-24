@@ -190,6 +190,14 @@ sleeping server takes a while to start, and a question that got no answer
 at all is asked once more (`--retries 1`). An answered question is never
 asked again, whatever its verdict. A full run takes about 4 minutes.
 
+### Uptime
+
+`.github/workflows/uptime.yml` runs `monitor.py` every 15 minutes: the
+public address must answer `/readyz` and `/v1/corpus/selftest`, and the
+`x-proxied-replica` header tells whether the Hugging Face Space or the
+standby server answered. A problem that survives three attempts a minute
+apart opens an issue in this repository; its end closes the issue.
+
 ---
 
 ## License
