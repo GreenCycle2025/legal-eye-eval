@@ -64,10 +64,16 @@ def run_label(path: Path) -> str:
 def badges(latest: dict) -> str:
     total, n_pass, n_fail = latest["total"], latest["pass"], latest["fail"]
     oos_total, oos_ok = latest["oos_total"], latest["oos_rejected"]
+    strict = []
+    if "strict_pass" in latest:
+        n_strict = latest["strict_pass"]
+        strict = [_badge("Strict PASS rate", "strict PASS", f"{_pct(n_strict, total)} ({n_strict}/{total})",
+                         GREEN, "#strict-authority-verdict")]
     return "\n".join([
         _badge("Last run", "last run", latest["date"], GOLD, "runs/latest.json"),
         _badge("PASS rate", "PASS", f"{_pct(n_pass, total)} ({n_pass}/{total})", GREEN,
                "runs/latest.json"),
+        *strict,
         _badge("FAIL count", "FAIL", str(n_fail), GREEN if n_fail == 0 else RED,
                "runs/latest.json"),
         _badge("Hallucinations", "hallucinations", "0%", GREEN, "#what-we-measure"),
@@ -81,7 +87,10 @@ def latest_block(latest: dict) -> str:
     total = latest["total"]
     n_err = total - latest["pass"] - latest["weak"] - latest["fail"]
     gate_n = -(-int(GATE * 100) * total // 100)  # ceil(GATE * total)
-    met = "met" if latest["pass"] >= gate_n else "not met"
+    strict = "strict_pass" in latest
+    # The gate counts the strict verdict once a run has it (decided 2026-10-24).
+    gate_pass = latest["strict_pass"] if strict else latest["pass"]
+    met = "met" if gate_pass >= gate_n else "not met"
     lines = [
         f"**Latest run: {latest['date']}** ([raw rows]({latest['run_file']}), "
         f"[summary](runs/latest.json))",
@@ -90,9 +99,23 @@ def latest_block(latest: dict) -> str:
         "|---|---|---|---|---|---|",
         f"| {total} | {latest['pass']} ({_pct(latest['pass'], total)}) | {latest['weak']} "
         f"| {latest['fail']} | {n_err} | {latest['oos_rejected']}/{latest['oos_total']} |",
-        "",
-        f"The launch gate is {int(GATE * 100)}% PASS ({gate_n}/{total}): {met}.",
     ]
+    if strict:
+        lines += [
+            "",
+            "| Strict authority verdict | PASS | WEAK | FAIL |",
+            "|---|---|---|---|",
+            f"| {total} questions | {latest['strict_pass']} ({_pct(latest['strict_pass'], total)}) "
+            f"| {latest['strict_weak']} | {latest['strict_fail']} |",
+            "",
+            f"The launch gate is {int(GATE * 100)}% PASS on the strict verdict ({gate_n}/{total}): {met}.",
+        ]
+    else:
+        lines += [
+            "",
+            f"The launch gate is {int(GATE * 100)}% PASS ({gate_n}/{total}): {met}. From the next run it "
+            "counts the strict authority verdict.",
+        ]
     by_domain = latest.get("by_domain") or {}
     if by_domain:
         lines += [

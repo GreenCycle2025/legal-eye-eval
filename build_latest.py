@@ -75,6 +75,16 @@ def main() -> int:
         "by_domain": dict(sorted(domain_breakdown(rows).items())),
         "methodology": "canonical-50-live-production",
     }
+    # The strict authority verdict (authority_expectations_v2.py), in runs
+    # made with a harness that has it; older runs keep the summary they had.
+    strict = Counter(str(r.get("strict_verdict")).upper() for r in rows if r.get("strict_verdict"))
+    if strict:
+        payload.update({
+            "strict_pass": strict.get("PASS", 0),
+            "strict_weak": strict.get("WEAK", 0),
+            "strict_fail": strict.get("FAIL", 0),
+            "strict_pass_rate": (strict.get("PASS", 0) / total if total else 0.0),
+        })
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(payload, ensure_ascii=False, indent=2))

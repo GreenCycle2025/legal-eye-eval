@@ -46,6 +46,33 @@ class TestReadme(unittest.TestCase):
         self.assertEqual(render_readme.render(empty, {"x": "new"}),
                          "<!-- generated:x -->\nnew\n<!-- /generated:x -->\n")
 
+    def test_the_gate_counts_the_strict_verdict_when_a_run_has_it(self) -> None:
+        latest = {"date": "2026-10-25", "run_file": "runs/run_2026_10_25.json", "total": 50,
+                  "pass": 44, "weak": 6, "fail": 0, "oos_total": 5, "oos_rejected": 5}
+        self.assertIn("85% PASS (43/50): met", render_readme.latest_block(latest))
+        latest.update(strict_pass=40, strict_weak=6, strict_fail=4)
+        block = render_readme.latest_block(latest)
+        self.assertIn("on the strict verdict (43/50): not met", block)
+        self.assertIn("| 50 questions | 40 (80%) | 6 | 4 |", block)
+        self.assertIn("strict_PASS-80%25_(40%2F50)", render_readme.badges(latest))
+
+    def test_build_latest_adds_strict_counts_only_for_runs_that_have_them(self) -> None:
+        rows = [{"question": "q1", "verdict": "PASS", "strict_verdict": "FAIL", "ok": True},
+                {"question": "q2", "verdict": "PASS", "strict_verdict": "PASS", "ok": True}]
+        with tempfile.TemporaryDirectory() as tmp:
+            run, out = Path(tmp) / "run_2026_10_25.json", Path(tmp) / "latest.json"
+            run.write_text(json.dumps(rows), encoding="utf-8")
+            subprocess.run([sys.executable, str(ROOT / "build_latest.py"), str(run), "--out", str(out)],
+                           cwd=ROOT, check=True, capture_output=True)
+            latest = json.loads(out.read_text(encoding="utf-8"))
+            self.assertEqual((latest["pass"], latest["strict_pass"], latest["strict_fail"]), (2, 1, 1))
+            for r in rows:
+                r.pop("strict_verdict")
+            run.write_text(json.dumps(rows), encoding="utf-8")
+            subprocess.run([sys.executable, str(ROOT / "build_latest.py"), str(run), "--out", str(out)],
+                           cwd=ROOT, check=True, capture_output=True)
+            self.assertNotIn("strict_pass", json.loads(out.read_text(encoding="utf-8")))
+
     def test_run_label(self) -> None:
         self.assertEqual(render_readme.run_label(Path("runs/run_2026_05_12_v2.json")),
                          "2026-05-12 (v2)")
