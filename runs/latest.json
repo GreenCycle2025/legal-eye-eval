@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "date": "2026-10-18",
-  "generated_at": "2026-10-18T08:05:10.972653+00:00",
+  "generated_at": "2026-10-24T10:23:10.424796+00:00",
   "run_file": "runs/run_2026_10_18.json",
   "total": 50,
   "pass": 14,
@@ -17,6 +17,44 @@
     "EVAL_ERROR": 3,
     "PASS": 14,
     "PROMOTION_THRESHOLD": 26
+  },
+  "by_domain": {
+    "out-of-scope": {
+      "PASS": 5,
+      "FAIL": 0,
+      "WEAK": 0,
+      "ERR": 0
+    },
+    "אחר": {
+      "PASS": 2,
+      "FAIL": 0,
+      "WEAK": 9,
+      "ERR": 1
+    },
+    "בריאות": {
+      "PASS": 1,
+      "FAIL": 0,
+      "WEAK": 5,
+      "ERR": 0
+    },
+    "חוזים": {
+      "PASS": 4,
+      "FAIL": 0,
+      "WEAK": 4,
+      "ERR": 2
+    },
+    "נזיקין": {
+      "PASS": 2,
+      "FAIL": 0,
+      "WEAK": 6,
+      "ERR": 0
+    },
+    "עבודה": {
+      "PASS": 0,
+      "FAIL": 0,
+      "WEAK": 9,
+      "ERR": 0
+    }
   },
   "methodology": "canonical-50-live-production"
 }

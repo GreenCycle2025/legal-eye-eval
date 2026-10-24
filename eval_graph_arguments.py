@@ -16,6 +16,12 @@ Useful as:
   • Snapshot — diff the ``--json`` output across runs to track
     quality over time.
 
+One harness, two places: this file is byte for byte the same in
+GreenCycle2025/legal-eye-eval (``eval_graph_arguments.py``, the weekly
+public run) and in legal-eye (``tau_rag/scripts/eval_graph_arguments.py``,
+used by eval_live.py, compare_eval.py and eval_corpus_doctrine.py). Change
+both together; ``scripts/check_eval_twin.sh`` in legal-eye compares them.
+
 Usage:
     python -m tau_rag.scripts.eval_graph_arguments
     python -m tau_rag.scripts.eval_graph_arguments \
@@ -337,6 +343,27 @@ def _post_json(url: str, body: Dict[str, Any], timeout: int = 30) -> Dict[str, A
         return {"_error": f"{type(e).__name__}: {e}"}
 
 
+def _wait_ready(base_url: str, max_wait_s: int) -> bool:
+    """Poll GET /readyz until it answers 200, for at most max_wait_s."""
+    deadline = time.monotonic() + max_wait_s
+    last = None
+    while True:
+        try:
+            with urllib.request.urlopen(f"{base_url}/readyz", timeout=30) as resp:
+                if resp.status == 200:
+                    print(f"# {base_url}/readyz: 200")
+                    return True
+                last = resp.status
+        except urllib.error.HTTPError as e:
+            last = e.code
+        except Exception as e:
+            last = type(e).__name__
+        if time.monotonic() >= deadline:
+            print(f"# {base_url}/readyz not ready after {max_wait_s}s ({last}); running anyway")
+            return False
+        time.sleep(10)
+
+
 # ──────────────────────────────────────────────────────────────────────
 # Per-question evaluation
 # ──────────────────────────────────────────────────────────────────────
@@ -615,13 +642,41 @@ def main() -> int:
         help="which endpoint to evaluate: lawyer/ask (default, full path) "
              "or hgraph/argument (bundle-only, fast on large corpora)",
     )
+    parser.add_argument(
+        "--pace", type=float, default=0.0,
+        help="seconds to wait between questions (the public address "
+             "allows each client 0.5 questions/s with a burst of 20)",
+    )
+    parser.add_argument(
+        "--retries", type=int, default=0,
+        help="ask a question again, up to this many times, when it got no "
+             "answer (timeout, connection error, HTTP error); a question "
+             "that was answered is never asked again, whatever its verdict",
+    )
+    parser.add_argument(
+        "--wait-ready", type=int, default=0,
+        help="before the first question, wait up to this many seconds for "
+             "GET /readyz to answer 200 (a sleeping server starts first)",
+    )
     args = parser.parse_args()
 
+    if args.wait_ready > 0:
+        _wait_ready(args.base_url, args.wait_ready)
     print(f"# Running {len(QUESTIONS)} questions against {args.base_url} "
           f"via {args.via}")
     rows: List[Dict[str, Any]] = []
-    for q in QUESTIONS:
-        rows.append(evaluate(args.base_url, q, args.timeout, via=args.via))
+    for i, q in enumerate(QUESTIONS):
+        row = evaluate(args.base_url, q, args.timeout, via=args.via)
+        attempts = 1
+        while not row.get("ok") and attempts <= args.retries:
+            time.sleep(max(args.pace, 5.0))
+            row = evaluate(args.base_url, q, args.timeout, via=args.via)
+            attempts += 1
+        if args.retries:
+            row["attempts"] = attempts
+        rows.append(row)
+        if args.pace > 0 and i + 1 < len(QUESTIONS):
+            time.sleep(args.pace)
 
     print_table(rows)
     print_summary(rows)

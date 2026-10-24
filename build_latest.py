@@ -12,6 +12,8 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 
+from eval_rescore import domain_breakdown
+
 OOS_TERMS = ("טראפיק", "עוגת", "איקאה", "בגרות", "לימון")
 
 
@@ -70,6 +72,7 @@ def main() -> int:
         "oos_rejected": oos_rejected,
         "oos_rejection_rate": (oos_rejected / len(oos) if oos else 1.0),
         "attribution": dict(sorted(attribution.items())),
+        "by_domain": dict(sorted(domain_breakdown(rows).items())),
         "methodology": "canonical-50-live-production",
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)

@@ -1,10 +1,12 @@
 # Legal Eye — Public Eval Harness
 
+<!-- generated:badges -->
 [![Last run](https://img.shields.io/badge/last_run-2026--10--18-bf9b30)](runs/latest.json)
 [![PASS rate](https://img.shields.io/badge/PASS-28%25_(14%2F50)-22c55e)](runs/latest.json)
 [![FAIL count](https://img.shields.io/badge/FAIL-0-22c55e)](runs/latest.json)
 [![Hallucinations](https://img.shields.io/badge/hallucinations-0%25-22c55e)](#what-we-measure)
 [![OOS rejection](https://img.shields.io/badge/out--of--scope_rejection-100%25_(5%2F5)-22c55e)](#what-we-measure)
+<!-- /generated:badges -->
 
 > Hebrew legal RAG, verbatim-from-precedent. No external LLM. Public score.
 
@@ -48,8 +50,8 @@ Legal Eye אומר: "אני לא ממציא ציטוטים. **אם אין לי �
    הצליחה (WEAK), נכשלה (FAIL), או הביאה תשובה לשאלה שלא הייתה אמורה
    לענות עליה (FAIL on out-of-scope).
 
-2. **`runs/baseline_2026_05_12.json`** — התוצאות הגולמיות מהריצה
-   האחרונה. 50 שורות, אחת לכל שאלה.
+2. **`runs/run_YYYY_MM_DD.json`** — התוצאות הגולמיות של כל ריצה,
+   50 שורות, אחת לכל שאלה; `runs/latest.json` מסכם את האחרונה.
 
 3. **GitHub Actions workflow** — מריץ את ה-eval מחדש **כל יום ראשון
    ב-03:00 UTC** ומעדכן את ה-badges שכאן ב-README.
@@ -60,8 +62,8 @@ Legal Eye אומר: "אני לא ממציא ציטוטים. **אם אין לי �
 git clone https://github.com/GreenCycle2025/legal-eye-eval
 cd legal-eye-eval
 python3 eval_graph_arguments.py \
-    --base-url https://legal-i-legal-eye.hf.space \
-    --via lawyer \
+    --base-url https://legal-eye-api.1bigfam.com \
+    --via lawyer --pace 2.5 --retries 1 --wait-ready 300 --timeout 90 \
     --json my_run.json
 python3 eval_rescore.py my_run.json
 ```
@@ -73,38 +75,51 @@ python3 eval_rescore.py my_run.json
 The harness applies a **3-pronged gate** designed around the system's
 real strength — *it knows when it doesn't know*:
 
-| Metric | Description | Current |
-|---|---|---|
-| `hallucination_rate` | Fraction of answers that fabricate a citation | **0%** (verified by code: only `verbatim_from_precedent` is wired up; no LLM key in the environment) |
-| `out_of_scope_rejection` | Fraction of adversarial queries (recipes, foreign-jurisdiction trivia, etc.) the system correctly refuses to answer verbatim | **100%** (5/5) |
-| `verbatim_promote_rate` | Fraction of in-scope canonical questions where the system promotes a high-confidence verbatim citation | **34%** (17/50) |
-| FAIL count | Promotions that are on-topic but pulled a citation whose verbatim text is about a different sub-topic | **0** ✅ |
+| Metric | Description |
+|---|---|
+| `hallucination_rate` | Fraction of answers that fabricate a citation: 0% by construction (only `verbatim_from_precedent` is wired up; no LLM key in the environment) |
+| `out_of_scope_rejection` | Fraction of adversarial queries (recipes, foreign-jurisdiction trivia, etc.) the system correctly refuses to answer verbatim |
+| PASS | In-scope questions where the system promotes a verbatim citation that carries the expected case and keywords |
+| WEAK | The system answered, but did not promote a verbatim quote that meets the bar; it abstains rather than guess |
+| FAIL | A promotion that pulled a citation about a different sub-topic, or an out-of-scope question answered |
+| No answer | The request failed (timeout, HTTP error); not a verdict on the answer |
 
-The remaining 33 questions land as `WEAK` — **the system answered, but
-without high enough cluster confidence to promote to a verbatim quote.**
-That is the correct behaviour: legal accuracy demands abstaining over
-guessing.
+These numbers are generated from the run files by `render_readme.py`; the
+weekly workflow rewrites them, and a test fails when they are out of date.
 
-### Why "34% PASS" is an honest baseline
+<!-- generated:latest -->
+**Latest run: 2026-10-18** ([raw rows](runs/run_2026_10_18.json), [summary](runs/latest.json))
 
-The PASS rate strongly correlates with the size of the per-domain
-corpus shard:
+| Questions | PASS | WEAK | FAIL | No answer (error) | Out-of-scope refused |
+|---|---|---|---|---|---|
+| 50 | 14 (28%) | 33 | 0 | 3 | 5/5 |
 
-| Domain | PASS rate | Tier-B shard size |
-|---|---|---|
-| out-of-scope (adversarial) | **5/5 (100%)** ✅ | n/a |
-| חוזים | 6/10 (60%) | 6,229 docs |
-| נזיקין | 2/8 (25%) | 4,545 docs |
-| בריאות | 1/6 (17%) | n/a |
-| **עבודה** | **0/9 (0%)** | **2,948 docs** (smallest) |
-| general | 3/12 (25%) | 207,442 docs |
+The launch gate is 85% PASS (43/50): not met.
 
-This is a **corpus-breadth problem, not a retrieval-quality problem.**
-The labor and torts shards are the smallest in the cluster, so the
-system honestly demurs on most labor questions instead of citing
-unrelated material. We're expanding those shards continuously — the
-next baseline run (2026-06-12) is expected to lift the labor PASS
-rate as new documents land.
+By topic (keyword buckets of `eval_rescore.domain_breakdown`):
+
+| Topic | Questions | PASS | WEAK | FAIL | No answer |
+|---|---|---|---|---|---|
+| out-of-scope | 5 | 5 | 0 | 0 | 0 |
+| אחר | 12 | 2 | 9 | 0 | 1 |
+| בריאות | 6 | 1 | 5 | 0 | 0 |
+| חוזים | 10 | 4 | 4 | 0 | 2 |
+| נזיקין | 8 | 2 | 6 | 0 | 0 |
+| עבודה | 9 | 0 | 9 | 0 | 0 |
+<!-- /generated:latest -->
+
+### Where it is weak, and what the 50 questions do not show
+
+- **Corpus scope.** The corpus is the Supreme Court of Israel only, a 2022
+  snapshot (751,194 documents, most of them interim decisions). Labour-court
+  rulings are not in it, which is why the labour questions stay WEAK, and
+  nothing after 2022 is.
+- **Tuned on these questions.** The answer engine was developed against
+  these 50 questions, so their score is optimistic. On a frozen test set
+  written after the method was final and never used for tuning (40
+  questions, 30 of them legal), the same engine scored 28 PASS, 11 WEAK and
+  1 FAIL, 19 of 30 on the legal questions, measured offline on 2026-10-23.
+  That is the estimate to quote for questions it has not seen.
 
 ---
 
@@ -166,12 +181,22 @@ agree on what "promoted" means.
 ## Reproducibility
 
 The harness is plain stdlib Python 3.8+. No dependencies. No mocking.
-It hits the real production API at
-`https://legal-i-legal-eye.hf.space` and reports what the production
-system actually returned.
+It hits the real production API at its public address,
+`https://legal-eye-api.1bigfam.com` (the same address the site calls), and
+reports what the production system actually returned. The address allows
+each client 0.5 questions per second with a burst of 20, so a run is paced
+(`--pace 2.5`); it first waits for `/readyz` (`--wait-ready`) because a
+sleeping server takes a while to start, and a question that got no answer
+at all is asked once more (`--retries 1`). An answered question is never
+asked again, whatever its verdict. A full run takes about 4 minutes.
 
-Latency: ~10-15 seconds per question on cold cache, ~3-5 seconds
-on warm. Full run takes ~10 minutes.
+### Uptime
+
+`.github/workflows/uptime.yml` runs `monitor.py` every 15 minutes: the
+public address must answer `/readyz` and `/v1/corpus/selftest`, and the
+`x-proxied-replica` header tells whether the Hugging Face Space or the
+standby server answered. A problem that survives three attempts a minute
+apart opens an issue in this repository; its end closes the issue.
 
 ---
 
@@ -185,8 +210,40 @@ methodology** as a credibility signal, not the **system internals**.
 
 ## Run history
 
-| Date | Total | PASS | WEAK | FAIL | Hallucination rate | OOS rejection | Notes |
-|---|---|---|---|---|---|---|---|
+Every run in `runs/`, generated by `render_readme.py` from the run files as
+they are stored.
+
+<!-- generated:history -->
+| Run | Questions | PASS | WEAK | FAIL | No answer |
+|---|---|---|---|---|---|
+| [2026-05-12](runs/run_2026_05_12.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-05-12 (v2)](runs/run_2026_05_12_v2.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-05-17](runs/run_2026_05_17.json) | 50 | 17 (34%) | 32 | 0 | 1 |
+| [2026-05-24](runs/run_2026_05_24.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-05-31](runs/run_2026_05_31.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-06-07](runs/run_2026_06_07.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-06-14](runs/run_2026_06_14.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-06-21](runs/run_2026_06_21.json) | 50 | 0 (0%) | 0 | 0 | 50 |
+| [2026-06-28](runs/run_2026_06_28.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-07-05](runs/run_2026_07_05.json) | 50 | 0 (0%) | 0 | 0 | 50 |
+| [2026-07-12](runs/run_2026_07_12.json) | 50 | 12 (24%) | 33 | 0 | 5 |
+| [2026-07-19](runs/run_2026_07_19.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-07-26](runs/run_2026_07_26.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-08-02](runs/run_2026_08_02.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-08-09](runs/run_2026_08_09.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-08-16](runs/run_2026_08_16.json) | 50 | 17 (34%) | 31 | 0 | 2 |
+| [2026-08-23](runs/run_2026_08_23.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-08-30](runs/run_2026_08_30.json) | 50 | 11 (22%) | 12 | 0 | 27 |
+| [2026-09-06](runs/run_2026_09_06.json) | 50 | 17 (34%) | 32 | 0 | 1 |
+| [2026-09-13](runs/run_2026_09_13.json) | 50 | 13 (26%) | 25 | 0 | 12 |
+| [2026-09-20](runs/run_2026_09_20.json) | 50 | 13 (26%) | 33 | 0 | 4 |
+| [2026-09-27](runs/run_2026_09_27.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-10-04](runs/run_2026_10_04.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-10-11](runs/run_2026_10_11.json) | 50 | 17 (34%) | 33 | 0 | 0 |
+| [2026-10-18](runs/run_2026_10_18.json) | 50 | 14 (28%) | 33 | 0 | 3 |
+<!-- /generated:history -->
+
+---|---|---|---|---|---|---|---|
 | 2026-05-12 (v1) | 50 | 16 (32%) | 33 | 1 | 0% | 100% (5/5) | Initial public baseline |
 | 2026-05-12 (v2) | 50 | **17 (34%)** | 33 | **0** ✅ | 0% | 100% (5/5) | Q1 keyword fix (`פירוש→פרשנ`); contracts domain rose 50→60% |
 | 2026-09-27 | 50 | **17 (34%)** | 33 | **0** ✅ | 0% | 100% (5/5) | Weekly run; no safety regression |
