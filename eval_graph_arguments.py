@@ -36,6 +36,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 
@@ -401,6 +402,10 @@ def evaluate(
     # Network / API failure — return early with the error
     if "_error" in payload or "_http_error" in payload:
         return {
+            "case_id":      q.get("case_id"),
+            "base_case_id": q.get("base_case_id"),
+            "variant_kind": q.get("variant_kind"),
+            "split":        q.get("split"),
             "question":     q["question"],
             "ok":           False,
             "elapsed_ms":   elapsed_ms,
@@ -432,6 +437,13 @@ def evaluate(
     expected = q.get("expect_anchor_substring")
     expect_no_promo = bool(q.get("expect_no_promotion"))
     expect_kws = q.get("expect_quote_keywords") or []
+    expected_source_doc_id = q.get("expect_source_doc_id")
+    diagnostic = bundle.get("diagnostic") or {}
+    actual_source_doc_id = diagnostic.get("anchor_quote_doc_id")
+    source_doc_match = (
+        expected_source_doc_id is None
+        or str(actual_source_doc_id or "") == str(expected_source_doc_id)
+    )
     anchor_label = bundle.get("anchor_label") or ""
     anchor_quote = bundle.get("anchor_quote") or ""
     # ── full-bundle haystack ──
@@ -487,21 +499,31 @@ def evaluate(
             verdict = "WEAK"
         elif not quote_keywords_ok:
             verdict = "FAIL"   # promoted but content is wrong
+        elif not source_doc_match:
+            verdict = "FAIL"   # promoted from the wrong authority/source document
         else:
             verdict = "PASS"
     else:
-        # No specific anchor expectation — content keywords still apply
+        # No specific anchor expectation — content keywords still apply.
+        # v3 can additionally require the exact frozen primary-law source.
         if not promoted:
             verdict = "WEAK"
         elif not quote_keywords_ok:
             verdict = "WEAK"   # promoted, no anchor expected, but content off
+        elif not source_doc_match:
+            verdict = "FAIL"
         else:
             verdict = "PASS"
 
-    diagnostic = bundle.get("diagnostic") or {}
     retriever_ranks = diagnostic.get("retriever_ranks_for_quote_doc") or {}
 
     return {
+        "case_id":               q.get("case_id"),
+        "base_case_id":          q.get("base_case_id"),
+        "base_index":            q.get("base_index"),
+        "variant_index":         q.get("variant_index"),
+        "variant_kind":          q.get("variant_kind"),
+        "split":                 q.get("split"),
         "question":              q["question"],
         "ok":                    True,
         "elapsed_ms":            elapsed_ms,
@@ -513,6 +535,10 @@ def evaluate(
         "anchor_label_match":    anchor_match,
         "expected_substring":    expected,
         "expect_quote_keywords": expect_kws,
+        "expect_no_promotion":   expect_no_promo,
+        "expected_source_doc_id": expected_source_doc_id,
+        "actual_source_doc_id":   actual_source_doc_id,
+        "source_doc_match":       source_doc_match,
         "missing_keywords":      missing_kws,
         "quote_keywords_ok":     quote_keywords_ok,
         "promoted_to_arguments": promoted,
@@ -618,6 +644,40 @@ def print_summary(rows: List[Dict[str, Any]]) -> None:
 
 
 # ──────────────────────────────────────────────────────────────────────
+# Suite loading / sharding
+# ──────────────────────────────────────────────────────────────────────
+
+def load_question_suite(path: Optional[str]) -> tuple[List[Dict[str, Any]], str]:
+    """Load a checked-in benchmark suite or fall back to canonical 50."""
+    if not path:
+        return list(QUESTIONS), "canonical-50"
+    suite_path = Path(path)
+    payload = json.loads(suite_path.read_text(encoding="utf-8"))
+    if isinstance(payload, dict):
+        rows = payload.get("cases")
+        name = str(payload.get("name") or suite_path.stem)
+    else:
+        rows = payload
+        name = suite_path.stem
+    if not isinstance(rows, list) or not rows:
+        raise SystemExit("suite must contain a non-empty cases list")
+    for index, row in enumerate(rows, start=1):
+        if not isinstance(row, dict) or not str(row.get("question") or "").strip():
+            raise SystemExit(f"suite case {index} is missing question")
+    return rows, name
+
+
+def shard_questions(
+    rows: List[Dict[str, Any]], *, shard_index: int, shard_count: int,
+) -> List[Dict[str, Any]]:
+    if shard_count < 1:
+        raise SystemExit("--shard-count must be >= 1")
+    if not 0 <= shard_index < shard_count:
+        raise SystemExit("--shard-index must satisfy 0 <= index < shard-count")
+    return rows[shard_index::shard_count]
+
+
+# ──────────────────────────────────────────────────────────────────────
 # Main
 # ──────────────────────────────────────────────────────────────────────
 
@@ -658,14 +718,33 @@ def main() -> int:
         help="before the first question, wait up to this many seconds for "
              "GET /readyz to answer 200 (a sleeping server starts first)",
     )
+    parser.add_argument(
+        "--suite", default=None,
+        help="optional JSON benchmark suite; defaults to the canonical 50",
+    )
+    parser.add_argument(
+        "--shard-index", type=int, default=0,
+        help="0-based shard index (use with --shard-count)",
+    )
+    parser.add_argument(
+        "--shard-count", type=int, default=1,
+        help="deterministically stride the suite into N shards",
+    )
     args = parser.parse_args()
 
+    questions, suite_name = load_question_suite(args.suite)
+    questions = shard_questions(
+        questions, shard_index=args.shard_index, shard_count=args.shard_count,
+    )
     if args.wait_ready > 0:
         _wait_ready(args.base_url, args.wait_ready)
-    print(f"# Running {len(QUESTIONS)} questions against {args.base_url} "
-          f"via {args.via}")
+    print(
+        f"# Running {len(questions)} questions from {suite_name} "
+        f"shard {args.shard_index}/{args.shard_count} against {args.base_url} "
+        f"via {args.via}"
+    )
     rows: List[Dict[str, Any]] = []
-    for i, q in enumerate(QUESTIONS):
+    for i, q in enumerate(questions):
         row = evaluate(args.base_url, q, args.timeout, via=args.via)
         attempts = 1
         while not row.get("ok") and attempts <= args.retries:
@@ -675,7 +754,7 @@ def main() -> int:
         if args.retries:
             row["attempts"] = attempts
         rows.append(row)
-        if args.pace > 0 and i + 1 < len(QUESTIONS):
+        if args.pace > 0 and i + 1 < len(questions):
             time.sleep(args.pace)
 
     print_table(rows)

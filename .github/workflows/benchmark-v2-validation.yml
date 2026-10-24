@@ -1,0 +1,29 @@
+name: benchmark-v2-validation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - feat/benchmark-v2-500
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+      - name: Verify deterministic 500-case suite
+        run: |
+          python3 benchmark_v2.py --check benchmarks/benchmark_v2_500.json
+          cp benchmarks/benchmark_v2_500.json /tmp/benchmark_v2_500.json
+          python3 benchmark_v2.py --out benchmarks/benchmark_v2_500.json
+          cmp /tmp/benchmark_v2_500.json benchmarks/benchmark_v2_500.json
+      - name: Run harness tests
+        run: python3 -m unittest -v test_benchmark_v2.py
+      - name: Compile public harness
+        run: python3 -m py_compile benchmark_v2.py benchmark_v2_report.py eval_graph_arguments.py test_benchmark_v2.py
