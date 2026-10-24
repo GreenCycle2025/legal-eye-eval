@@ -94,7 +94,7 @@ weekly workflow rewrites them, and a test fails when they are out of date.
 |---|---|---|---|---|---|
 | 50 | 14 (28%) | 33 | 0 | 3 | 5/5 |
 
-The launch gate is 85% PASS (43/50): not met.
+The launch gate is 85% PASS (43/50): not met. From the next run it counts the strict authority verdict.
 
 By topic (keyword buckets of `eval_rescore.domain_breakdown`):
 
@@ -120,6 +120,76 @@ By topic (keyword buckets of `eval_rescore.domain_breakdown`):
   questions, 30 of them legal), the same engine scored 28 PASS, 11 WEAK and
   1 FAIL, 19 of 30 on the legal questions, measured offline on 2026-10-23.
   That is the estimate to quote for questions it has not seen.
+
+---
+
+## Strict authority verdict
+
+Since 2026-10-24 every question has two verdicts. `verdict` is the ladder
+below, unchanged. `strict_verdict` applies the same ladder and adds one
+condition: the answer must rest on the right authority.
+
+An answer is a strict FAIL when it is promoted and one of these holds:
+
+- it rests on another legal domain than the question's;
+- it does not name the governing authority where one is unambiguous, for
+  example the Sick Pay Law for sick pay or the Defective Products Liability
+  Law for product liability (`authority_expectations_v2.py`);
+- it comes from another source document than the one a suite requires
+  (`expect_source_doc_id`, benchmark v3).
+
+A plausible answer supported by an unrelated authority used to count as
+PASS. It no longer counts.
+
+**The launch gate counts the strict verdict:** 85% strict PASS on the 50
+questions (43/50). The weekly run publishes both verdicts.
+
+## Benchmark v2: 500-case robustness holdout
+
+The 50 canonical questions remain the public production score. In addition, this repo now carries a separate **500-case robustness suite** at `benchmarks/benchmark_v2_500.json`. It is an official set for robustness, not a separate gate: a release must not score clearly lower on the 450 holdout variants than on the 50 canonical questions, since that gap is the sign of tuning to the wording.
+
+This is intentionally described as **50 independent canonical cases × 10 deterministic wording/stress variants**, not as 500 independent legal doctrines. The extra 450 cases are holdout transformations used to detect prompt-surface overfitting after tuning on the canonical set.
+
+The holdout covers concise/formal phrasing, evidence-only requests, anti-hallucination wording, harmless context noise, punctuation/spacing noise, current-law framing, source-coercion resistance, and a facts/question wrapper. Each row preserves the original `expect_*` assertions and contains provenance back to its source question.
+
+```bash
+python3 benchmark_v2.py --check benchmarks/benchmark_v2_500.json
+python3 -m unittest -v test_benchmark_v2.py
+python3 eval_graph_arguments.py \
+  --suite benchmarks/benchmark_v2_500.json \
+  --base-url https://legal-i-legal-eye.hf.space \
+  --via hgraph \
+  --json /tmp/legal-eye-benchmark-v2.json
+python3 benchmark_v2_report.py /tmp/legal-eye-benchmark-v2.json
+```
+
+The v2 reporter keeps canonical and holdout scores separate and derives out-of-scope rejection from suite metadata. No v2 score is shown in the production badges until a complete run has actually been executed.
+
+---
+
+## Benchmark v3: independent doctrines
+
+`benchmarks/benchmark_v3_independent_100.json` has 100 cases: 80 Israeli-law
+questions on topics the engine was not tuned on, 10 in each of 8 groups, and
+20 out-of-scope controls. An in-scope case passes only when the answer
+comes from the frozen primary-law source, the statute section in
+`expect_source_doc_id`. A plausible answer from the wrong source is a FAIL.
+Details: `benchmarks/README_v3.md`.
+
+Its sources are statute sections (`heb_law/...`). The production corpus
+does not serve them yet: they come with the statutes extension of
+legal-eye's authoritative-statutes work. Until that is live, v3 measures
+something production cannot do, so it is not part of the gate yet. Once it
+is live, v3 is run once against production and becomes a second gate,
+X% PASS, set by the owner. X will be no lower than that first measurement,
+and the target is 60%.
+
+```bash
+python3 benchmark_v3.py --check benchmarks/benchmark_v3_independent_100.json
+python3 eval_graph_arguments.py --suite benchmarks/benchmark_v3_independent_100.json \
+  --base-url https://legal-eye-api.1bigfam.com --pace 2.5 --json /tmp/legal-eye-v3.json
+python3 benchmark_v3_report.py /tmp/legal-eye-v3.json --suite benchmarks/benchmark_v3_independent_100.json
+```
 
 ---
 
