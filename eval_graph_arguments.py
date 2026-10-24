@@ -39,6 +39,11 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+try:            # here, run as a script
+    from authority_expectations_v2 import validate as validate_authority_v2
+except ImportError:  # legal-eye: tau_rag/scripts/, imported as a package module
+    from .authority_expectations_v2 import validate as validate_authority_v2
+
 
 # ──────────────────────────────────────────────────────────────────────
 # Canonical question set — covers the major Israeli civil-law doctrines
@@ -369,6 +374,36 @@ def _wait_ready(base_url: str, max_wait_s: int) -> bool:
 # Per-question evaluation
 # ──────────────────────────────────────────────────────────────────────
 
+def _hgraph_promoted(bundle: Dict[str, Any]) -> bool:
+    """Mirror ArgumentBundle.can_promote without importing product code.
+
+    A verified primary statute is a first-class evidence lane and may
+    publish below cluster thresholds. All other bundles retain the historic
+    score/coverage and query-fusion evidence guards.
+    """
+    anchor_quote = (bundle.get("anchor_quote") or "").strip()
+    if not anchor_quote:
+        return False
+    if bool(bundle.get("statute_evidence_verified")):
+        return True
+
+    cluster_score = float(bundle.get("cluster_score") or 0.0)
+    coverage = float(bundle.get("coverage") or 0.0)
+    min_score = float(bundle.get("MIN_PROMOTE_SCORE") or 0.5)
+    min_cov = float(bundle.get("MIN_PROMOTE_COVERAGE") or 0.15)
+    high_bypass = float(bundle.get("HIGH_SCORE_BYPASS") or 0.65)
+    promoted = (
+        (cluster_score >= min_score and coverage >= min_cov)
+        or cluster_score >= high_bypass
+    )
+    diagnostic = bundle.get("diagnostic") or {}
+    if promoted and diagnostic.get("promotion_relies_on_query_fusion"):
+        qscore = float(diagnostic.get("anchor_quote_query_score") or 0.0)
+        reranked = bool(diagnostic.get("anchor_quote_reranked"))
+        promoted = qscore >= 0.75 or (reranked and qscore >= 0.60)
+    return promoted
+
+
 def evaluate(
     base_url: str, q: Dict[str, Any], timeout: int, *, via: str = "lawyer",
 ) -> Dict[str, Any]:
@@ -418,16 +453,7 @@ def evaluate(
         # the bundle itself: promote iff (score≥MIN AND cov≥MIN_COV) OR
         # (score≥HIGH_BYPASS). Previous "score≥0.5" heuristic was lax —
         # let out-of-scope hits with cov=5% slip through as FAILs.
-        cluster_score = float(bundle.get("cluster_score") or 0.0)
-        coverage      = float(bundle.get("coverage") or 0.0)
-        anchor_quote  = (bundle.get("anchor_quote") or "").strip()
-        MIN_SCORE     = float(bundle.get("MIN_PROMOTE_SCORE") or 0.5)
-        MIN_COV       = float(bundle.get("MIN_PROMOTE_COVERAGE") or 0.15)
-        HIGH_BYPASS   = float(bundle.get("HIGH_SCORE_BYPASS") or 0.65)
-        promoted_synthetic = bool(anchor_quote) and (
-            (cluster_score >= MIN_SCORE and coverage >= MIN_COV)
-            or cluster_score >= HIGH_BYPASS
-        )
+        promoted_synthetic = _hgraph_promoted(bundle)
         args = ([{"polish_method": "graph_bundle"}]
                 if promoted_synthetic else [])
     else:
@@ -484,6 +510,8 @@ def evaluate(
 
     # Did the graph promote? (arguments[0].polish_method == 'graph_bundle')
     promoted = arg0.get("polish_method") == "graph_bundle"
+    resolved_domain = payload.get("domain") or bundle.get("domain")
+    strict = validate_authority_v2(q["question"], resolved_domain, bundle)
 
     # Verdict ladder:
     #   FAIL — expectation explicitly violated (out-of-scope promoted,
@@ -515,6 +543,21 @@ def evaluate(
         else:
             verdict = "PASS"
 
+    # Strict authority v2 (authority_expectations_v2.py): the same ladder,
+    # and also FAIL when the answer rests on another legal domain, on an
+    # authority other than the governing one, or on another source document.
+    if expect_no_promo:
+        strict_verdict = "PASS" if not promoted else "FAIL"
+    elif not promoted:
+        strict_verdict = "WEAK"
+    elif (not strict["strict_domain_ok"] or not strict["strict_authority_ok"]
+          or not source_doc_match):
+        strict_verdict = "FAIL"
+    elif not quote_keywords_ok:
+        strict_verdict = "WEAK"
+    else:
+        strict_verdict = "PASS"
+
     retriever_ranks = diagnostic.get("retriever_ranks_for_quote_doc") or {}
 
     return {
@@ -528,8 +571,10 @@ def evaluate(
         "ok":                    True,
         "elapsed_ms":            elapsed_ms,
         "verdict":               verdict,
+        "strict_verdict":        strict_verdict,
         "tier":                  payload.get("confidence"),
-        "domain":                payload.get("domain"),
+        "domain":                resolved_domain,
+        **strict,
         "cluster_id":            bundle.get("cluster_id"),
         "anchor_label":          anchor_label,
         "anchor_label_match":    anchor_match,
@@ -551,6 +596,13 @@ def evaluate(
             ((bundle.get("diagnostic") or {}).get("alternative_clusters")) or []
         ),
         "is_virtual_anchor":     (bundle.get("anchor_id") or "").startswith("virtual:"),
+        "statute_evidence_verified": bool(bundle.get("statute_evidence_verified")),
+        "statute_evidence_doc_id": bundle.get("statute_evidence_doc_id"),
+        "statute_evidence_law": bundle.get("statute_evidence_law"),
+        "statute_evidence_section": bundle.get("statute_evidence_section"),
+        "statute_evidence_title": bundle.get("statute_evidence_title"),
+        "statute_evidence_score": bundle.get("statute_evidence_score"),
+        "statute_evidence_rank": bundle.get("statute_evidence_rank"),
         "anchor_quote_chars":    len(anchor_quote),
         # Failure-attribution instrumentation from Legal Eye vNext. Older
         # production versions simply omit these diagnostics, so the public
@@ -641,6 +693,13 @@ def print_summary(rows: List[Dict[str, Any]]) -> None:
           f"WEAK: {n_weak}  ERR: {n_err}")
     print(f"Promoted to arguments[0]: {n_promoted}/{len(valid)}  "
           f"·  avg latency: {avg_ms:.0f}ms")
+    strict_counts = {
+        key: sum(1 for r in valid if r.get("strict_verdict") == key)
+        for key in ("PASS", "WEAK", "FAIL")
+    }
+    print("Strict authority v2: "
+          f"PASS {strict_counts['PASS']} · WEAK {strict_counts['WEAK']} · "
+          f"FAIL {strict_counts['FAIL']}")
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -719,6 +778,10 @@ def main() -> int:
              "GET /readyz to answer 200 (a sleeping server starts first)",
     )
     parser.add_argument(
+        "--strict-authority", action="store_true",
+        help="fail the run on strict authority/domain violations as well",
+    )
+    parser.add_argument(
         "--suite", default=None,
         help="optional JSON benchmark suite; defaults to the canonical 50",
     )
@@ -766,8 +829,9 @@ def main() -> int:
         print(f"\nFull results written to: {args.json}")
 
     # Exit non-zero if any FAIL or ERR
+    verdict_field = "strict_verdict" if args.strict_authority else "verdict"
     bad = sum(1 for r in rows
-              if not r.get("ok") or r.get("verdict") == "FAIL")
+              if not r.get("ok") or r.get(verdict_field) == "FAIL")
     return 1 if bad > 0 else 0
 
 
