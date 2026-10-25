@@ -1,22 +1,21 @@
 {
   "schema_version": 1,
-  "date": "2026-10-18",
-  "generated_at": "2026-10-24T10:23:10.424796+00:00",
-  "run_file": "runs/run_2026_10_18.json",
+  "date": "2026-10-25",
+  "generated_at": "2026-10-25T08:21:26.966226+00:00",
+  "run_file": "runs/run_2026_10_25.json",
   "total": 50,
-  "pass": 14,
-  "weak": 33,
+  "pass": 38,
+  "weak": 12,
   "fail": 0,
-  "pass_rate": 0.28,
-  "weak_rate": 0.66,
+  "pass_rate": 0.76,
+  "weak_rate": 0.24,
   "oos_total": 5,
   "oos_rejected": 5,
   "oos_rejection_rate": 1.0,
   "attribution": {
-    "CITATION_MISS": 7,
-    "EVAL_ERROR": 3,
-    "PASS": 14,
-    "PROMOTION_THRESHOLD": 26
+    "CITATION_MISS": 3,
+    "PASS": 38,
+    "PROMOTION_THRESHOLD": 9
   },
   "by_domain": {
     "out-of-scope": {
@@ -26,35 +25,39 @@
       "ERR": 0
     },
     "אחר": {
-      "PASS": 2,
+      "PASS": 10,
       "FAIL": 0,
-      "WEAK": 9,
-      "ERR": 1
+      "WEAK": 2,
+      "ERR": 0
     },
     "בריאות": {
-      "PASS": 1,
+      "PASS": 4,
       "FAIL": 0,
-      "WEAK": 5,
+      "WEAK": 2,
       "ERR": 0
     },
     "חוזים": {
-      "PASS": 4,
+      "PASS": 9,
       "FAIL": 0,
-      "WEAK": 4,
-      "ERR": 2
+      "WEAK": 1,
+      "ERR": 0
     },
     "נזיקין": {
-      "PASS": 2,
+      "PASS": 6,
       "FAIL": 0,
-      "WEAK": 6,
+      "WEAK": 2,
       "ERR": 0
     },
     "עבודה": {
-      "PASS": 0,
+      "PASS": 4,
       "FAIL": 0,
-      "WEAK": 9,
+      "WEAK": 5,
       "ERR": 0
     }
   },
-  "methodology": "canonical-50-live-production"
+  "methodology": "canonical-50-live-production",
+  "strict_pass": 24,
+  "strict_weak": 10,
+  "strict_fail": 16,
+  "strict_pass_rate": 0.48
 }
