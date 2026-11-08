@@ -1,9 +1,9 @@
 # Legal Eye — Public Eval Harness
 
 <!-- generated:badges -->
-[![Last run](https://img.shields.io/badge/last_run-2026--11--01-bf9b30)](runs/latest.json)
-[![PASS rate](https://img.shields.io/badge/PASS-84%25_(42%2F50)-22c55e)](runs/latest.json)
-[![Strict PASS rate](https://img.shields.io/badge/strict_PASS-84%25_(42%2F50)-22c55e)](#strict-authority-verdict)
+[![Last run](https://img.shields.io/badge/last_run-2026--11--08-bf9b30)](runs/latest.json)
+[![PASS rate](https://img.shields.io/badge/PASS-86%25_(43%2F50)-22c55e)](runs/latest.json)
+[![Strict PASS rate](https://img.shields.io/badge/strict_PASS-86%25_(43%2F50)-22c55e)](#strict-authority-verdict)
 [![FAIL count](https://img.shields.io/badge/FAIL-0-22c55e)](runs/latest.json)
 [![Hallucinations](https://img.shields.io/badge/hallucinations-0%25-22c55e)](#what-we-measure)
 [![OOS rejection](https://img.shields.io/badge/out--of--scope_rejection-100%25_(5%2F5)-22c55e)](#what-we-measure)
@@ -89,17 +89,17 @@ These numbers are generated from the run files by `render_readme.py`; the
 weekly workflow rewrites them, and a test fails when they are out of date.
 
 <!-- generated:latest -->
-**Latest run: 2026-11-01** ([raw rows](runs/run_2026_11_01.json), [summary](runs/latest.json))
+**Latest run: 2026-11-08** ([raw rows](runs/run_2026_11_08.json), [summary](runs/latest.json))
 
 | Questions | PASS | WEAK | FAIL | No answer (error) | Out-of-scope refused |
 |---|---|---|---|---|---|
-| 50 | 42 (84%) | 8 | 0 | 0 | 5/5 |
+| 50 | 43 (86%) | 7 | 0 | 0 | 5/5 |
 
 | Strict authority verdict | PASS | WEAK | FAIL |
 |---|---|---|---|
-| 50 questions | 42 (84%) | 8 | 0 |
+| 50 questions | 43 (86%) | 7 | 0 |
 
-The launch gate is 85% PASS on the strict verdict (43/50): not met.
+The launch gate is 85% PASS on the strict verdict (43/50): met.
 
 By topic (keyword buckets of `eval_rescore.domain_breakdown`):
 
@@ -108,7 +108,7 @@ By topic (keyword buckets of `eval_rescore.domain_breakdown`):
 | out-of-scope | 5 | 5 | 0 | 0 | 0 |
 | אחר | 12 | 11 | 1 | 0 | 0 |
 | בריאות | 6 | 4 | 2 | 0 | 0 |
-| חוזים | 10 | 9 | 1 | 0 | 0 |
+| חוזים | 10 | 10 | 0 | 0 | 0 |
 | נזיקין | 8 | 6 | 2 | 0 | 0 |
 | עבודה | 9 | 7 | 2 | 0 | 0 |
 <!-- /generated:latest -->
@@ -318,6 +318,7 @@ they are stored.
 | [2026-10-18](runs/run_2026_10_18.json) | 50 | 14 (28%) | 33 | 0 | 3 |
 | [2026-10-25](runs/run_2026_10_25.json) | 50 | 38 (76%) | 12 | 0 | 0 |
 | [2026-11-01](runs/run_2026_11_01.json) | 50 | 42 (84%) | 8 | 0 | 0 |
+| [2026-11-08](runs/run_2026_11_08.json) | 50 | 43 (86%) | 7 | 0 | 0 |
 <!-- /generated:history -->
 
 ---|---|---|---|---|---|---|---|

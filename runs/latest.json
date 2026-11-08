@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
-  "date": "2026-11-01",
-  "generated_at": "2026-11-01T10:22:46.015091+00:00",
-  "run_file": "runs/run_2026_11_01.json",
+  "date": "2026-11-08",
+  "generated_at": "2026-11-08T10:10:37.267624+00:00",
+  "run_file": "runs/run_2026_11_08.json",
   "total": 50,
-  "pass": 42,
-  "weak": 8,
+  "pass": 43,
+  "weak": 7,
   "fail": 0,
-  "pass_rate": 0.84,
-  "weak_rate": 0.16,
+  "pass_rate": 0.86,
+  "weak_rate": 0.14,
   "oos_total": 5,
   "oos_rejected": 5,
   "oos_rejection_rate": 1.0,
   "attribution": {
-    "CITATION_MISS": 2,
-    "PASS": 42,
+    "CITATION_MISS": 1,
+    "PASS": 43,
     "PROMOTION_THRESHOLD": 6
   },
   "by_domain": {
@@ -37,9 +37,9 @@
       "ERR": 0
     },
     "חוזים": {
-      "PASS": 9,
+      "PASS": 10,
       "FAIL": 0,
-      "WEAK": 1,
+      "WEAK": 0,
       "ERR": 0
     },
     "נזיקין": {
@@ -56,8 +56,8 @@
     }
   },
   "methodology": "canonical-50-live-production",
-  "strict_pass": 42,
-  "strict_weak": 8,
+  "strict_pass": 43,
+  "strict_weak": 7,
   "strict_fail": 0,
-  "strict_pass_rate": 0.84
+  "strict_pass_rate": 0.86
 }
